@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mekdep Testleri</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Mekdep okuwçylary üçin synaglar</h1>
+      <p>Word faýllaryndan çykarylan soraglar boýunça onlaýn barlag we bahalandyrma.</p>
+    </div>
+    <button id="teacher-toggle" type="button">Mugallym tertibi</button>
+  </header>
+
+  <main>
+    <aside id="filters">
+      <div class="filter-group">
+        <label for="grade-select">Synp saýla</label>
+        <select id="grade-select"></select>
+      </div>
+      <div class="filter-group">
+        <label for="test-select">Test faýly</label>
+        <select id="test-select"></select>
+      </div>
+      <div class="filter-group note">
+        <p>“Mugallym tertibi” arkaly jogap wariantlarynyň dogrusyny belläň. Bellikler brauzerde ýerli görnüşde saklanýar.</p>
+      </div>
+    </aside>
+
+    <section id="content">
+      <div id="test-meta"></div>
+      <div id="questions"></div>
+      <div id="actions">
+        <button id="submit-btn" type="button">Netije görkez</button>
+        <button id="reset-btn" type="button">Jogaplary arassala</button>
+      </div>
+      <div id="results" aria-live="polite"></div>
+      <details id="raw-view">
+        <summary>Word faýlynyň aslaky teksti</summary>
+        <pre id="raw-text"></pre>
+      </details>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
