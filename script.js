@@ -19,9 +19,12 @@ let progressBarEl = document.querySelector("#progress-bar");
 
 // Quiz state
 let currentQuestionIndex = 0;
-const WRONG_ANSWER_PENALTY = 15;
-const TIME_PER_QUESTION = 60;
+let WRONG_ANSWER_PENALTY = 15;
+let TIME_PER_QUESTION = 60;
 const MIN_NAME_LENGTH = 2;
+let score = 0;
+let correctCount = 0;
+let scorePerQuestion = 0;
 let time = questions.length * TIME_PER_QUESTION;
 let timerId;
 let isQuizActive = false;
@@ -111,6 +114,30 @@ function sortQuestionSets(sets) {
     const testB = (b.test || "").toString().toLowerCase();
     return testA.localeCompare(testB);
   });
+}
+
+function computeTimingConfig(grade, questionCount) {
+  const numericGrade = Number(grade);
+  let perQuestion = 60;
+
+  if (Number.isFinite(numericGrade)) {
+    if (numericGrade <= 3) {
+      perQuestion = 75;
+    } else if (numericGrade <= 6) {
+      perQuestion = 60;
+    } else if (numericGrade <= 9) {
+      perQuestion = 50;
+    } else {
+      perQuestion = 45;
+    }
+  }
+
+  // Clamp lower bound to keep pace lively for small tests
+  perQuestion = Math.max(30, perQuestion);
+  const penalty = Math.max(10, Math.round(perQuestion * 0.25));
+  const totalTime = Math.max(questionCount * perQuestion, perQuestion);
+
+  return { perQuestion, penalty, totalTime };
 }
 
 // Load question sets from generated bank
@@ -248,7 +275,11 @@ function applySelectedSet() {
   activeSet = set;
   questions = (set.questions || []).filter((q) => q.prompt);
   currentQuestionIndex = 0;
-  time = questions.length * TIME_PER_QUESTION;
+  const timing = computeTimingConfig(set.grade, questions.length);
+  TIME_PER_QUESTION = timing.perQuestion;
+  WRONG_ANSWER_PENALTY = timing.penalty;
+  time = timing.totalTime;
+  scorePerQuestion = questions.length ? Math.max(1, Math.round(100 / questions.length)) : 0;
   timerEl.textContent = time || 0;
   startBtn.disabled = !questions.length;
   const analysis = activeSet.analysis || {
@@ -283,7 +314,7 @@ function applySelectedSet() {
     set.subject || set.title
   } • Synp: ${set.grade || "belli däl"} • Test: ${set.test || "-"} • Sorag sany: ${
     questions.length
-  }${issueText}`;
+  } • Her soraga: ${TIME_PER_QUESTION} sek • Nädogry üçin: -${WRONG_ANSWER_PENALTY} sek${issueText}`;
   updateProgressLabel();
   syncProgressBar();
 }
@@ -295,7 +326,13 @@ function quizStart() {
     return;
   }
   currentQuestionIndex = 0;
-  time = questions.length * TIME_PER_QUESTION;
+  const timing = computeTimingConfig(activeSet?.grade, questions.length);
+  TIME_PER_QUESTION = timing.perQuestion;
+  WRONG_ANSWER_PENALTY = timing.penalty;
+  time = timing.totalTime;
+  score = 0;
+  correctCount = 0;
+  scorePerQuestion = questions.length ? Math.max(1, Math.round(100 / questions.length)) : 0;
   timerEl.textContent = time;
   startBtn.disabled = true;
   questionSetSelect.disabled = true;
@@ -334,9 +371,12 @@ function questionClick() {
   if (!isQuizActive) return;
 
   const answer = questions[currentQuestionIndex].answer;
-  if (!answer) {
+  const hasAnswer = Boolean(answer);
+  const isCorrect = hasAnswer && this.value === answer;
+
+  if (!hasAnswer) {
     showFeedback("Jogaplar maglumat üçin berilýär.", "neutral");
-  } else if (this.value !== answer) {
+  } else if (!isCorrect) {
     time -= WRONG_ANSWER_PENALTY;
     if (time < 0) {
       time = 0;
@@ -344,6 +384,8 @@ function questionClick() {
     timerEl.textContent = time;
     showFeedback("Nädogry! Dogry jogap:  " + answer, "error");
   } else {
+    correctCount += 1;
+    score += scorePerQuestion;
     showFeedback("Jogap dogry!", "success");
   }
   currentQuestionIndex++;
@@ -376,7 +418,12 @@ function quizEnd() {
   let endScreenEl = document.getElementById("quiz-end");
   endScreenEl.removeAttribute("class");
   let finalScoreEl = document.getElementById("score-final");
-  finalScoreEl.textContent = `${time} sek`;
+  const totalQuestions = questions.length || 1;
+  const percentScore = Math.round((correctCount / totalQuestions) * 100);
+  const cappedScore = Math.min(score, scorePerQuestion * totalQuestions);
+  const finalScore = Math.max(percentScore, cappedScore);
+  score = finalScore;
+  finalScoreEl.textContent = `${finalScore} bal • Dogry: ${correctCount}/${totalQuestions} • Galan wagt: ${time} sek`;
   questionsEl.setAttribute("class", "hide");
   startBtn.disabled = false;
   questionSetSelect.disabled = false;
@@ -411,7 +458,11 @@ function saveHighscore() {
 
   let highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
   let newScore = {
-    score: time,
+    score: score,
+    correct: correctCount,
+    total: questions.length,
+    timeLeft: time,
+    setTitle: activeSet?.title || "Belli däl",
     name: name,
   };
   highscores.push(newScore);

@@ -3,6 +3,7 @@ import json
 import re
 import zipfile
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 ROOT = Path(__file__).parent
 DOCX_FILES = sorted(ROOT.glob("*.docx"))
@@ -14,6 +15,30 @@ def extract_text(docx_path: Path) -> str:
         raw = zf.read("word/document.xml").decode("utf-8")
     parts = re.findall(r"<w:t[^>]*>(.*?)</w:t>", raw)
     return " ".join(parts)
+
+
+def extract_runs(docx_path: Path):
+    """Return a flat list of (text, is_bold) runs to preserve simple styling cues."""
+    with zipfile.ZipFile(docx_path) as zf:
+        raw = zf.read("word/document.xml").decode("utf-8")
+
+    root = ET.fromstring(raw)
+    ns = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    runs = []
+
+    for paragraph in root.findall(".//w:body/w:p", ns):
+        for run in paragraph.findall("w:r", ns):
+            texts = [t.text for t in run.findall("w:t", ns) if t.text]
+            if not texts:
+                continue
+            text = "".join(texts)
+            if not text.strip():
+                continue
+            is_bold = run.find("w:rPr/w:b", ns) is not None
+            runs.append((text, is_bold))
+        runs.append((" ", False))
+
+    return runs
 
 
 def clean_text(text: str) -> str:
@@ -66,6 +91,75 @@ def parse_questions(text: str):
     return questions
 
 
+def parse_questions_with_styles(runs):
+    """Parse questions while inferring correct answers from bolded options."""
+
+    combined_parts = []
+    spans = []
+    cursor = 0
+    for text, is_bold in runs:
+        if combined_parts and not combined_parts[-1].endswith(" "):
+            text = " " + text
+        combined_parts.append(text)
+        start = cursor
+        cursor += len(text)
+        spans.append((start, cursor, is_bold))
+
+    combined_text = "".join(combined_parts)
+    normalized_text = clean_text(combined_text)
+
+    def has_bold(start, end):
+        for span_start, span_end, is_bold in spans:
+            if not is_bold:
+                continue
+            if span_start < end and span_end > start:
+                return True
+        return False
+
+    parsed = []
+    for match in re.finditer(r"(\d+)\.\s*(.*?)(?=\s\d+\.\s|$)", combined_text, flags=re.S):
+        body = match.group(2).strip()
+        if not body:
+            continue
+        prompt_part = body
+        option_section = ""
+        if "a)" in body:
+            prompt_part, option_section = body.split("a)", 1)
+        prompt = clean_text(prompt_part.strip(" .:\n"))
+
+        options = []
+        bold_answer = None
+        option_blob = ("a)" + option_section) if option_section else ""
+        for opt_match in re.finditer(r"([a-d])\)\s*(.*?)(?=(?:\s[a-d]\)|$))", option_blob, flags=re.I | re.S):
+            opt_text_raw = opt_match.group(2)
+            opt_text = clean_text(opt_text_raw)
+            if not opt_text:
+                continue
+            options.append(opt_text)
+            if bold_answer:
+                continue
+            opt_start, opt_end = opt_match.span(2)
+            if has_bold(opt_start, opt_end):
+                bold_answer = opt_text
+
+        if not options and option_section:
+            remainder = clean_text(option_section)
+            if remainder:
+                options.append(remainder)
+
+        answer = bold_answer or (options[0] if options else None)
+        parsed.append({
+            "prompt": prompt or "Sorag berilmedi",
+            "options": options,
+            "answer": answer,
+        })
+
+    if parsed:
+        return parsed
+
+    return parse_questions(normalized_text)
+
+
 def derive_metadata(path: Path):
     """Infer grade, test letter, and prefix from the filename."""
     name = path.stem
@@ -80,11 +174,12 @@ def derive_metadata(path: Path):
 def build_question_bank():
     question_sets = []
     for docx in DOCX_FILES:
-        raw_text = extract_text(docx)
+        runs = extract_runs(docx)
+        raw_text = "".join([text for text, _ in runs])
         cleaned = clean_text(raw_text)
         grade, test, prefix = derive_metadata(docx)
         subject = detect_subject(cleaned, docx.stem)
-        questions = parse_questions(cleaned)
+        questions = parse_questions_with_styles(runs)
         question_sets.append(
             {
                 "title": docx.name,

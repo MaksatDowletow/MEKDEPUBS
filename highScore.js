@@ -18,13 +18,20 @@ function printHighscores() {
   document.getElementById("clear").disabled = false;
   highscores
     .sort(function (a, b) {
+      if (b.score === a.score) {
+        return (b.correct || 0) - (a.correct || 0);
+      }
       return b.score - a.score;
     })
     .forEach(function (score, index) {
       let liTag = document.createElement("li");
       const safeName = score.name || "(At girizilmedi)";
       const safeScore = Number.isFinite(score.score) ? score.score : 0;
-      liTag.textContent = `${index + 1}. ${safeName} - ${safeScore} sek`;
+      const correct = Number.isFinite(score.correct) ? score.correct : "-";
+      const total = Number.isFinite(score.total) ? score.total : "-";
+      const timeLeft = Number.isFinite(score.timeLeft) ? score.timeLeft : 0;
+      const setTitle = score.setTitle || "Toplum";
+      liTag.textContent = `${index + 1}. ${safeName} - ${safeScore} bal • Dogry: ${correct}/${total} • Galan wagt: ${timeLeft} sek • ${setTitle}`;
       list.appendChild(liTag);
     });
 }
