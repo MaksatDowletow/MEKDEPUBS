@@ -1,82 +1,8 @@
 // script.js
 
-let questions = [
-  {
-    prompt: "1337+244 ulumy yada 234+1347",
-    options: ["1337+244", "1347+234", "deň"],
-    answer: "deň",
-  },
-  {
-    prompt: "1 t 5 sent ulumy yada 15 sent",
-    options: ["1 t 5 sent", "15 sent", "deň"],
-    answer: "deň",
-  },
-  {
-    prompt: "2 manat 30 teňňe ulumy yada 233 teňňe",
-    options: ["2 manat 30 teňňe", "deň", "233 teňňe"],
-    answer: "233 teňňe",
-  },
-  {
-    prompt: "1 sag 30 min kiçi yada 100",
-    options: ["100", "den", "1 sag 30 min"],
-    answer: "1 sag 30 min",
-  },
-  {
-    prompt: "25*5= ",
-    options: ["155", "125", "100", "65"],
-    answer: "125",
-  },
-  {
-    prompt: "108*9",
-    options: ["1000", "874", "295", "972"],
-    answer: "972",
-  },
-  {
-    prompt: "4820*37",
-    options: ["178340", "169067", "897456", "178240"],
-    answer: "178340",
-  },
-  {
-    prompt: "64/16",
-    options: ["8", "44", "4", "5"],
-    answer: "4",
-  },
-  {
-    prompt: "315/4",
-    options: ["87 (6 gal)", "78 (3 gal)", "78", "79 (10 gal)"],
-    answer: "78 (3 gal)",
-  },
-  {
-    prompt: "3150/70",
-    options: ["45", "54", "42", "41"],
-    answer: "45",
-  },
-  {
-    prompt: "12350/50",
-    options: ["237", "274", "247", "973"],
-    answer: "247",
-  },
-  {
-    prompt: "x+331=716 x-a derek aşakdakylardan haýsysyny goýmaly?",
-    options: ["358", "385", "298", "259"],
-    answer: "385",
-  },
-  {
-    prompt: "x-224=765 x-a derek aşakdakylardan haýsysyny goýmaly?",
-    options: ["1000", "899", "999", "989"],
-    answer: "989",
-  },
-  {
-    prompt: "x+509=605 x-a derek aşakdakylardan haýsysyny goýmaly?",
-    options: ["99", "97", "96", "98"],
-    answer: "96",
-  },
-  {
-    prompt: "x-279=821 x-a derek aşakdakylardan haýsysyny goýmaly?",
-    options: ["1000", "1100", "1111", "1210"],
-    answer: "1100",
-  },
-];
+let questions = [];
+let questionSets = [];
+let activeSet = null;
 
 // Get Dom Elements
 
@@ -88,6 +14,8 @@ let startBtn = document.querySelector("#start");
 let nameEl = document.querySelector("#name");
 let feedbackEl = document.querySelector("#feedback");
 let reStartBtn = document.querySelector("#restart");
+let questionSetSelect = document.querySelector("#question-set");
+let questionSetMeta = document.querySelector("#question-set-meta");
 
 // Quiz's initial state
 let currentQuestionIndex = 0;
@@ -95,9 +23,63 @@ const WRONG_ANSWER_PENALTY = 15;
 let time = questions.length * 60;
 let timerId;
 
+// Load question sets from generated bank
+async function loadQuestionBank() {
+  try {
+    const response = await fetch("./question-bank.json");
+    const data = await response.json();
+    questionSets = data;
+    populateQuestionSelector();
+    applySelectedSet();
+    startBtn.disabled = false;
+  } catch (error) {
+    console.error("Sorag bazasyny ýüklemekde säwlik: ", error);
+    questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
+    startBtn.disabled = true;
+  }
+}
+
+function populateQuestionSelector() {
+  questionSetSelect.innerHTML = "";
+  questionSets.forEach((set, index) => {
+    const option = document.createElement("option");
+    const labelParts = [];
+    if (set.grade) labelParts.push(`${set.grade} synp`);
+    if (set.test) labelParts.push(`Test ${set.test}`);
+    option.value = index;
+    option.textContent = labelParts.length
+      ? `${set.prefix || "Toplum"} – ${labelParts.join(" • ")}`
+      : set.title;
+    questionSetSelect.appendChild(option);
+  });
+}
+
+function applySelectedSet() {
+  const selection = Number(questionSetSelect.value) || 0;
+  const set = questionSets[selection];
+  if (!set) {
+    questions = [];
+    questionSetMeta.textContent = "Soraglar tapylmady.";
+    return;
+  }
+  activeSet = set;
+  questions = (set.questions || []).filter((q) => q.prompt);
+  currentQuestionIndex = 0;
+  time = questions.length * 60;
+  questionSetMeta.textContent = `${set.subject} • Synp: ${
+    set.grade || "belli däl"
+  } • Test: ${set.test || "-"}`;
+}
+
 // Start quiz and hide frontpage
 
 function quizStart() {
+  if (!questions.length) {
+    alert("Sorag toplumy ýüklendi diýip hasaplanylmaýar.");
+    return;
+  }
+  currentQuestionIndex = 0;
+  time = questions.length * 60;
   timerId = setInterval(clockTick, 1000);
   timerEl.textContent = time;
   let landingScreenEl = document.getElementById("start-screen");
@@ -113,7 +95,10 @@ function getQuestion() {
   let promptEl = document.getElementById("question-words");
   promptEl.textContent = currentQuestion.prompt;
   choicesEl.innerHTML = "";
-  currentQuestion.options.forEach(function (choice, i) {
+  (currentQuestion.options || ["Jogap berilmedi"]).forEach(function (
+    choice,
+    i
+  ) {
     let choiceBtn = document.createElement("button");
     choiceBtn.setAttribute("value", choice);
     choiceBtn.textContent = i + 1 + ". " + choice;
@@ -126,14 +111,17 @@ function getQuestion() {
 // Time for wrong answer, go to next question
 
 function questionClick() {
-  if (this.value !== questions[currentQuestionIndex].answer) {
+  const answer = questions[currentQuestionIndex].answer;
+  if (!answer) {
+    feedbackEl.textContent = "Jogaplar maglumat üçin berilýär.";
+    feedbackEl.style.color = "black";
+  } else if (this.value !== answer) {
     time -= WRONG_ANSWER_PENALTY;
     if (time < 0) {
       time = 0;
     }
     timerEl.textContent = time;
-    feedbackEl.textContent =
-      "Nädogry! Dogry jogap:  " + questions[currentQuestionIndex].answer;
+    feedbackEl.textContent = "Nädogry! Dogry jogap:  " + answer;
     feedbackEl.style.color = "red";
   } else {
     feedbackEl.textContent = "Jogap dogry!";
@@ -215,3 +203,7 @@ submitBtn.onclick = saveHighscore;
 // Start quiz after clicking start quiz
 
 startBtn.onclick = quizStart;
+
+questionSetSelect.onchange = applySelectedSet;
+
+loadQuestionBank();
