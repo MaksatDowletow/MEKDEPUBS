@@ -305,6 +305,18 @@ p {
   border-color: #bbf7d0;
 }
 
+.chip-subject {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+.chip-group {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .options {
   display: grid;
   gap: 10px;

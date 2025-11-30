@@ -21,6 +21,7 @@ const metaGradeEl = document.querySelector("#meta-grade");
 const metaTimeEl = document.querySelector("#meta-time");
 const metaPenaltyEl = document.querySelector("#meta-penalty");
 const chipIndexEl = document.querySelector("#chip-index");
+const chipSubjectEl = document.querySelector("#chip-subject");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -167,85 +168,23 @@ function updateMetaCards({
 
 // Load question sets from generated bank
 async function loadQuestionBank() {
-  // Minimal backup data so the app still works if remote files fail to load
-  const fallbackQuestionBank = [
-    {
-      title: "Ätiýaç toplumy",
-      grade: "4",
-      test: "A",
-      prefix: "Demo",
-      subject: "Matematika",
-      questions: [
-        {
-          prompt: "2 + 2 = ?",
-          options: ["3", "4", "5"],
-          answer: "4",
-        },
-        {
-          prompt: "5 × 3 = ?",
-          options: ["8", "15", "53"],
-          answer: "15",
-        },
-      ],
-    },
-  ];
-
   questionSetSelect.innerHTML = "<option>Ýüklenýär...</option>";
   questionSetMeta.textContent = "Synag toplumy ýüklenerkä garaşyň.";
   questionSetSelect.disabled = true;
   startBtn.disabled = true;
+  questionSets = sortQuestionSets(normalizeQuestionSets(window.UBS_REGISTRY || []));
 
-  const useQuestionData = (data, sourceLabel = "") => {
-    if (!Array.isArray(data) || !data.length) {
-      questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
-      questionSetMeta.textContent =
-        "Soraglar ýüklenerkä ýalňyşlyk ýüze çykdy. Täzeden synanyşyň.";
-      updateProgressLabel();
-      return;
-    }
-
-    questionSets = sortQuestionSets(normalizeQuestionSets(data));
-
-    if (!questionSets.length) {
-      questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
-      questionSetMeta.textContent =
-        "Ulanylyp bilinjek sorag toplumy tapylmady. Çeşmäňizi barlaň.";
-      startBtn.disabled = true;
-      updateProgressLabel();
-      return;
-    }
-
-    populateQuestionSelector();
-    questionSetSelect.disabled = false;
-    questionSetMeta.textContent = `${questionSets.length} sany synag toplumy elýeterli. Birini saýlaň.`;
-
-    if (sourceLabel) {
-      questionSetMeta.textContent = `${questionSetMeta.textContent} • Çeşme: ${sourceLabel}`;
-    }
-  };
-
-  // Preferred inline bank injected via question-bank.js to avoid fetch/CORS issues
-  if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
-    useQuestionData(window.questionBankData, "JS");
+  if (!questionSets.length) {
+    questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
+    questionSetMeta.textContent =
+      "Sorag tapylmady. UBS/UBT faýllary ýüklenendigini we düzümini barlaň.";
+    updateProgressLabel();
     return;
   }
 
-  try {
-    const response = await fetch("./question-bank.json", { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    const data = await response.json();
-    if (Array.isArray(data) && data.length) {
-      useQuestionData(data, "JSON");
-      return;
-    }
-  } catch (error) {
-    console.error("Sorag bazasyny JSON arkaly ýüklemekde säwlik: ", error);
-  }
-
-  // Final fallback: built-in demo questions so UI never stays empty
-  useQuestionData(fallbackQuestionBank, "Ätiýaç");
+  populateQuestionSelector();
+  questionSetSelect.disabled = false;
+  questionSetMeta.textContent = `${questionSets.length} sany UBS/UBT toplumy elýeterli. Birini saýlaň.`;
 }
 
 function populateQuestionSelector() {
@@ -285,6 +224,7 @@ function applySelectedSet() {
     updateMetaCards();
     updateProgressLabel();
     syncProgressBar();
+    chipSubjectEl.textContent = "-";
     return;
   }
 
@@ -316,6 +256,7 @@ function applySelectedSet() {
     perQuestion: TIME_PER_QUESTION,
     penalty: WRONG_ANSWER_PENALTY,
   });
+  chipSubjectEl.textContent = set.subject || "-";
   const analysis = activeSet.analysis || {
     total: activeSet.questions.length,
     missingOptions: 0,
