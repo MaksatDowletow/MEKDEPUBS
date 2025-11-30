@@ -50,6 +50,26 @@ a {
   padding: 28px 28px 32px;
 }
 
+.status-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #eef3ff;
+  color: #102b5f;
+  font-weight: 700;
+  border: 1px solid #d8e2ff;
+}
+
 header {
   display: flex;
   justify-content: space-between;
@@ -83,6 +103,24 @@ header {
   border: 1px solid #cde3b3;
 }
 
+.progress-track {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.progress-bar {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  transition: width 160ms ease;
+}
+
 /* Buttons */
 button,
 .btn {
@@ -105,6 +143,12 @@ button:hover,
   background: var(--accent-strong);
   box-shadow: 0 10px 24px rgba(46, 91, 4, 0.22);
   transform: translateY(-1px);
+}
+
+button:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid rgba(46, 91, 4, 0.2);
+  outline-offset: 1px;
 }
 
 button:disabled {
@@ -186,6 +230,12 @@ button:disabled {
   color: var(--muted);
 }
 
+.helper-text {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 #questions {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -207,6 +257,16 @@ button:disabled {
   display: inline-flex;
   justify-content: flex-start;
   text-align: left;
+  border-color: var(--border);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+}
+
+.options button:hover {
+  border-color: #cde3b3;
+  background: linear-gradient(120deg, #f8fff3, #f4f9ff);
+  box-shadow: 0 12px 26px rgba(46, 91, 4, 0.14);
 }
 
 input[type="text"] {
@@ -215,6 +275,11 @@ input[type="text"] {
   border-radius: 10px;
   border: 1px solid var(--border);
   min-width: 220px;
+}
+
+.input-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .form-row {
@@ -235,6 +300,9 @@ input[type="text"] {
   background: var(--surface);
   border-radius: 12px;
   border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .feedback.success {

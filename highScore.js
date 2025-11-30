@@ -22,7 +22,9 @@ function printHighscores() {
     })
     .forEach(function (score, index) {
       let liTag = document.createElement("li");
-      liTag.textContent = `${index + 1}. ${score.name} - ${score.score}`;
+      const safeName = score.name || "(At girizilmedi)";
+      const safeScore = Number.isFinite(score.score) ? score.score : 0;
+      liTag.textContent = `${index + 1}. ${safeName} - ${safeScore} sek`;
       list.appendChild(liTag);
     });
 }

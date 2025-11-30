@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Onlaýn matematika we dil synaglary üçin interaktiw platforma"
+    />
     <link rel="stylesheet" href="./style.css" />
     <title>4-nji synpyň matematika synagy</title>
   </head>
@@ -20,11 +24,20 @@
               Synagdan geçenler
             </button>
           </form>
-          <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
-            Wagyt/baha: <span id="timer">0</span>
-          </div>
         </div>
       </header>
+
+      <section class="status-panel" aria-label="Synag ýagdaýy">
+        <div class="pill" id="question-progress" aria-live="polite">
+          Soraglara taýýarlyk görülýär...
+        </div>
+        <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
+          Wagyt/baha: <span id="timer">0</span>
+        </div>
+        <div class="progress-track" role="presentation">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+      </section>
 
       <main class="quiz">
         <div id="quiz-start">
@@ -50,6 +63,10 @@
             </div>
             <p id="question-set-meta" class="selector-meta"></p>
             <button id="start" disabled>Synaga başlaň</button>
+            <p class="helper-text">
+              Üçin baryp görmek üçin synag toplumy saýlaň, soň "Synaga başlaň"
+              düwmesine basyň. Her soragdan soň ýagdaý güýçlendirilip görkeziler.
+            </p>
           </div>
         </div>
 
@@ -71,11 +88,15 @@
               id="name"
               name="name"
               maxlength="20"
+              minlength="2"
               aria-label="Adyňyzy giriziň"
               autocomplete="name"
               required
             />
             <button id="submit-score" aria-label="Netijäni tassykla">Barla</button>
+            <span class="input-hint" id="name-hint">
+              Adyňyz 2–20 harp arasynda bolmalydyr.
+            </span>
           </div>
         </div>
 

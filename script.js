@@ -14,11 +14,14 @@ let nameEl = document.querySelector("#name");
 let feedbackEl = document.querySelector("#feedback");
 let questionSetSelect = document.querySelector("#question-set");
 let questionSetMeta = document.querySelector("#question-set-meta");
+let questionProgressEl = document.querySelector("#question-progress");
+let progressBarEl = document.querySelector("#progress-bar");
 
 // Quiz state
 let currentQuestionIndex = 0;
 const WRONG_ANSWER_PENALTY = 15;
 const TIME_PER_QUESTION = 60;
+const MIN_NAME_LENGTH = 2;
 let time = questions.length * TIME_PER_QUESTION;
 let timerId;
 let isQuizActive = false;
@@ -72,6 +75,7 @@ function applySelectedSet() {
     questionSetMeta.textContent = "Soraglar tapylmady.";
     startBtn.disabled = true;
     timerEl.textContent = 0;
+    updateProgressLabel();
     return;
   }
   activeSet = set;
@@ -83,6 +87,8 @@ function applySelectedSet() {
   questionSetMeta.textContent = `${set.subject} • Synp: ${
     set.grade || "belli däl"
   } • Test: ${set.test || "-"} • Sorag sany: ${questions.length}`;
+  updateProgressLabel();
+  syncProgressBar();
 }
 
 // Start quiz and hide frontpage
@@ -101,6 +107,8 @@ function quizStart() {
   let landingScreenEl = document.getElementById("start-screen");
   landingScreenEl.setAttribute("class", "hide");
   questionsEl.removeAttribute("class");
+  updateProgressLabel();
+  syncProgressBar();
   getQuestion();
 }
 
@@ -120,6 +128,8 @@ function getQuestion() {
     choiceBtn.onclick = questionClick;
     choicesEl.appendChild(choiceBtn);
   });
+  updateProgressLabel();
+  syncProgressBar();
 }
 
 // Check for right answers and deduct time for wrong answer
@@ -173,6 +183,8 @@ function quizEnd() {
   questionsEl.setAttribute("class", "hide");
   startBtn.disabled = false;
   questionSetSelect.disabled = false;
+  updateProgressLabel(true);
+  syncProgressBar(true);
 }
 
 // Stop when timer hits 0
@@ -188,8 +200,8 @@ function clockTick() {
 // Save scores alongside a name in localStorage
 function saveHighscore() {
   let name = nameEl.value.trim();
-  if (name === "") {
-    alert("Adyňyz boş bolmaly däl.");
+  if (name.length < MIN_NAME_LENGTH) {
+    alert("Adyňyz 2 harpdan gysga bolmaly däl.");
     return;
   }
 
@@ -208,6 +220,34 @@ function saveHighscore() {
   highscores.push(newScore);
   window.localStorage.setItem("highscores", JSON.stringify(highscores));
   alert(name + " Siziň balyňyz ýatda saklandy");
+}
+
+// Update status bar label and progress indicator
+function updateProgressLabel(isFinished = false) {
+  if (!questions.length) {
+    questionProgressEl.textContent = "Sorag toplumy taýýar edilýär";
+    return;
+  }
+
+  if (isFinished) {
+    questionProgressEl.textContent = "Netije taýýar!";
+    return;
+  }
+
+  const total = questions.length;
+  const current = Math.min(currentQuestionIndex + 1, total);
+  questionProgressEl.textContent = `Sorag ${current}/${total}`;
+}
+
+function syncProgressBar(forceComplete = false) {
+  if (!questions.length) {
+    progressBarEl.style.width = "0%";
+    return;
+  }
+  const progress = forceComplete
+    ? 100
+    : Math.min((currentQuestionIndex / questions.length) * 100, 100).toFixed(2);
+  progressBarEl.style.width = `${progress}%`;
 }
 
 // Save users' score after pressing enter
