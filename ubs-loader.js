@@ -2,48 +2,45 @@
 (function () {
   const registry = (window.UBS_REGISTRY = window.UBS_REGISTRY || []);
 
-  function splitIntoSubjects(questions) {
-    const sets = [];
-    let currentSubject = null;
-    let buffer = [];
-
-    const pushBuffer = () => {
-      if (!buffer.length) return;
-      const subject = currentSubject || "Toplum";
-      sets.push({ subject, questions: buffer });
-      buffer = [];
-    };
+  function normalizeQuestions({ subject, questions }) {
+    let activeSubject = subject?.trim() || null;
+    const collected = [];
 
     (questions || []).forEach((item) => {
       if (item && item.subjectMarker) {
-        pushBuffer();
-        currentSubject = (item.subject || "Toplum").trim();
+        if (!activeSubject && item.subject) {
+          activeSubject = item.subject.trim();
+        }
         return;
       }
+
       if (item && item.prompt) {
-        buffer.push({ ...item });
+        collected.push({ ...item });
       }
     });
 
-    pushBuffer();
-    return sets;
+    return {
+      subject: activeSubject || "Toplum",
+      questions: collected,
+    };
   }
 
   window.registerUBSQuestions = function registerUBSQuestions({
     grade,
     test,
     prefix = "UBS",
+    subject,
     questions = [],
   }) {
-    splitIntoSubjects(questions).forEach(({ subject, questions: subjectQuestions }) => {
-      registry.push({
-        title: `${prefix} • ${subject}`,
-        grade,
-        test,
-        prefix,
-        subject,
-        questions: subjectQuestions,
-      });
+    const normalized = normalizeQuestions({ subject, questions });
+
+    registry.push({
+      title: `${prefix} • ${normalized.subject}`,
+      grade,
+      test,
+      prefix,
+      subject: normalized.subject,
+      questions: normalized.questions,
     });
   };
 })();
