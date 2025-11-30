@@ -26,6 +26,45 @@ let time = questions.length * TIME_PER_QUESTION;
 let timerId;
 let isQuizActive = false;
 
+// Normalize question sets to avoid unusable/empty entries
+function normalizeQuestionSets(rawSets) {
+  if (!Array.isArray(rawSets)) return [];
+
+  return rawSets
+    .map((set) => {
+      const normalizedQuestions = Array.isArray(set.questions)
+        ? set.questions
+            .map((question) => {
+              const prompt =
+                typeof question.prompt === "string" ? question.prompt.trim() : "";
+              const options = Array.isArray(question.options)
+                ? question.options.filter(
+                    (opt) => typeof opt === "string" && opt.trim()
+                  )
+                : [];
+              const answer =
+                typeof question.answer === "string" && question.answer.trim()
+                  ? question.answer
+                  : options[0] || null;
+
+              return {
+                ...question,
+                prompt,
+                options,
+                answer,
+              };
+            })
+            .filter((q) => q.prompt && (q.options.length || q.answer))
+        : [];
+
+      return {
+        ...set,
+        questions: normalizedQuestions,
+      };
+    })
+    .filter((set) => set.questions.length);
+}
+
 // Load question sets from generated bank
 async function loadQuestionBank() {
   // Minimal backup data so the app still works if remote files fail to load
@@ -55,12 +94,21 @@ async function loadQuestionBank() {
   startBtn.disabled = true;
 
   const useQuestionData = (data, sourceLabel = "") => {
-    questionSets = Array.isArray(data) ? data : [];
-
-    if (!questionSets.length) {
+    if (!Array.isArray(data) || !data.length) {
       questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
       questionSetMeta.textContent =
         "Soraglar ýüklenerkä ýalňyşlyk ýüze çykdy. Täzeden synanyşyň.";
+      updateProgressLabel();
+      return;
+    }
+
+    questionSets = normalizeQuestionSets(data);
+
+    if (!questionSets.length) {
+      questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
+      questionSetMeta.textContent =
+        "Ulanylyp bilinjek sorag toplumy tapylmady. Çeşmäňizi barlaň.";
+      startBtn.disabled = true;
       updateProgressLabel();
       return;
     }
