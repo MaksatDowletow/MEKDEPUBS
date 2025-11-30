@@ -124,6 +124,12 @@ async function loadQuestionBank() {
     }
   };
 
+  // Preferred inline bank injected via question-bank.js to avoid fetch/CORS issues
+  if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
+    useQuestionData(window.questionBankData, "JS");
+    return;
+  }
+
   try {
     const response = await fetch("./question-bank.json", { cache: "no-store" });
     if (!response.ok) {
@@ -136,12 +142,6 @@ async function loadQuestionBank() {
     }
   } catch (error) {
     console.error("Sorag bazasyny JSON arkaly ýüklemekde säwlik: ", error);
-  }
-
-  // Preferred inline bank injected via question-bank.js to avoid fetch/CORS issues
-  if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
-    useQuestionData(window.questionBankData, "JS");
-    return;
   }
 
   // Final fallback: built-in demo questions so UI never stays empty
