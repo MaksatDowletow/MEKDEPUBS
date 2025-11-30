@@ -32,20 +32,47 @@ function normalizeQuestionSets(rawSets) {
 
   return rawSets
     .map((set) => {
+      const analysis = {
+        total: 0,
+        missingOptions: 0,
+        missingAnswer: 0,
+        autoFilledAnswers: 0,
+      };
+
       const normalizedQuestions = Array.isArray(set.questions)
         ? set.questions
             .map((question) => {
+              analysis.total += 1;
               const prompt =
                 typeof question.prompt === "string" ? question.prompt.trim() : "";
               const options = Array.isArray(question.options)
-                ? question.options.filter(
-                    (opt) => typeof opt === "string" && opt.trim()
+                ? Array.from(
+                    new Set(
+                      question.options
+                        .map((opt) => (typeof opt === "string" ? opt.trim() : ""))
+                        .filter(Boolean)
+                    )
                   )
                 : [];
-              const answer =
+
+              if (!options.length) {
+                analysis.missingOptions += 1;
+              }
+
+              let answer =
                 typeof question.answer === "string" && question.answer.trim()
-                  ? question.answer
-                  : options[0] || null;
+                  ? question.answer.trim()
+                  : null;
+
+              if (options.length) {
+                if (!answer) {
+                  analysis.missingAnswer += 1;
+                  answer = options[0];
+                } else if (!options.includes(answer)) {
+                  analysis.autoFilledAnswers += 1;
+                  answer = options[0];
+                }
+              }
 
               return {
                 ...question,
@@ -59,10 +86,31 @@ function normalizeQuestionSets(rawSets) {
 
       return {
         ...set,
+        analysis,
         questions: normalizedQuestions,
       };
     })
     .filter((set) => set.questions.length);
+}
+
+function sortQuestionSets(sets) {
+  const numericValue = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY;
+  };
+
+  return [...sets].sort((a, b) => {
+    const gradeDiff = numericValue(a.grade) - numericValue(b.grade);
+    if (gradeDiff !== 0) return gradeDiff;
+
+    const prefixA = (a.prefix || "").toLowerCase();
+    const prefixB = (b.prefix || "").toLowerCase();
+    if (prefixA !== prefixB) return prefixA.localeCompare(prefixB);
+
+    const testA = (a.test || "").toString().toLowerCase();
+    const testB = (b.test || "").toString().toLowerCase();
+    return testA.localeCompare(testB);
+  });
 }
 
 // Load question sets from generated bank
@@ -104,7 +152,7 @@ async function loadQuestionBank() {
       return;
     }
 
-    questionSets = normalizeQuestionSets(data);
+    questionSets = sortQuestionSets(normalizeQuestionSets(data));
 
     if (!questionSets.length) {
       questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
@@ -163,10 +211,12 @@ function populateQuestionSelector() {
     const labelParts = [];
     if (set.grade) labelParts.push(`${set.grade} synp`);
     if (set.test) labelParts.push(`Test ${set.test}`);
+    const totalQuestions = set.questions?.length || 0;
     option.value = index;
     option.textContent = labelParts.length
       ? `${set.prefix || "Toplum"} – ${labelParts.join(" • ")}`
       : set.title;
+    option.textContent = `${option.textContent} • ${totalQuestions} sorag`;
     questionSetSelect.appendChild(option);
   });
 }
@@ -201,9 +251,39 @@ function applySelectedSet() {
   time = questions.length * TIME_PER_QUESTION;
   timerEl.textContent = time || 0;
   startBtn.disabled = !questions.length;
-  questionSetMeta.textContent = `${set.subject} • Synp: ${
-    set.grade || "belli däl"
-  } • Test: ${set.test || "-"} • Sorag sany: ${questions.length}`;
+  const analysis = activeSet.analysis || {
+    total: activeSet.questions.length,
+    missingOptions: 0,
+    missingAnswer: 0,
+    autoFilledAnswers: 0,
+  };
+
+  const adjustedTotal = analysis.total;
+  const droppedCount = adjustedTotal - activeSet.questions.length;
+  const issueSummaries = [];
+
+  if (analysis.missingOptions) {
+    issueSummaries.push(`Hiç bolmanda bir saýlawy bolmadyk: ${analysis.missingOptions}`);
+  }
+  if (analysis.missingAnswer) {
+    issueSummaries.push(`Jogapsyz: ${analysis.missingAnswer}`);
+  }
+  if (analysis.autoFilledAnswers) {
+    issueSummaries.push(`Jogap saýlaw bilen deňeşdirilip düzedildi: ${analysis.autoFilledAnswers}`);
+  }
+  if (droppedCount > 0) {
+    issueSummaries.push(`Düzgünsizligi sebäpli çykarylan: ${droppedCount}`);
+  }
+
+  const issueText = issueSummaries.length
+    ? ` • Hil deslapky gözden geçirme: ${issueSummaries.join("; ")}`
+    : "";
+
+  questionSetMeta.textContent = `${
+    set.subject || set.title
+  } • Synp: ${set.grade || "belli däl"} • Test: ${set.test || "-"} • Sorag sany: ${
+    questions.length
+  }${issueText}`;
   updateProgressLabel();
   syncProgressBar();
 }
