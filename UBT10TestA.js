@@ -789,3 +789,5 @@ let questions = [
     answer: "Täzelenmek",
   },
 ];
+
+registerUBSQuestions({ grade: "10", test: "A", prefix: "UBT", questions });

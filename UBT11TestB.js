@@ -677,3 +677,5 @@ let questions = [
   }
 
 ];
+
+registerUBSQuestions({ grade: "11", test: "B", prefix: "UBT", questions });
