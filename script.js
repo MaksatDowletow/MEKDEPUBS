@@ -153,6 +153,66 @@ function computeTimingConfig(grade, questionCount) {
   return { perQuestion, penalty, totalTime };
 }
 
+function buildComprehensiveGradeSets(sets) {
+  const grouped = new Map();
+
+  sets.forEach((set) => {
+    if (!set || !set.grade) return;
+
+    const prefix = set.prefix || "Toplum";
+    const test = set.test || "";
+    const key = `${prefix}|${set.grade}|${test}`;
+    const existing = grouped.get(key) || {
+      prefix,
+      grade: set.grade,
+      test,
+      questions: [],
+      sourceSubjects: new Set(),
+      analysis: {
+        total: 0,
+        missingOptions: 0,
+        missingAnswer: 0,
+        autoFilledAnswers: 0,
+      },
+    };
+
+    existing.questions.push(...(set.questions || []));
+    const stats = set.analysis || {
+      total: set.questions?.length || 0,
+      missingOptions: 0,
+      missingAnswer: 0,
+      autoFilledAnswers: 0,
+    };
+    existing.analysis.total += stats.total;
+    existing.analysis.missingOptions += stats.missingOptions;
+    existing.analysis.missingAnswer += stats.missingAnswer;
+    existing.analysis.autoFilledAnswers += stats.autoFilledAnswers;
+    existing.sourceSubjects.add(set.subject || set.title || "Toplum");
+
+    grouped.set(key, existing);
+  });
+
+  return Array.from(grouped.values()).map((group) => {
+    const subjectList = Array.from(group.sourceSubjects);
+    const subjectLabel =
+      subjectList.length > 1
+        ? `Bitewi synag (${subjectList.length} ders)`
+        : subjectList[0] || "Bitewi synag";
+
+    return {
+      title: `${group.prefix} • Bitewi synag`,
+      grade: group.grade,
+      test: group.test,
+      prefix: group.prefix,
+      subject: subjectLabel,
+      questions: group.questions,
+      analysis: group.analysis,
+      combined: true,
+      sourceSubjects: subjectList,
+    };
+  });
+}
+
 function updateMetaCards({
   title = "Saýlanmady",
   grade,
@@ -177,7 +237,10 @@ async function loadQuestionBank() {
     ? window.UBS_REGISTRY
     : window.QUESTION_BANK || [];
 
-  questionSets = sortQuestionSets(normalizeQuestionSets(rawBank));
+  const normalizedSets = sortQuestionSets(normalizeQuestionSets(rawBank));
+  const comprehensiveSets = buildComprehensiveGradeSets(normalizedSets);
+
+  questionSets = sortQuestionSets([...normalizedSets, ...comprehensiveSets]);
 
   if (!questionSets.length) {
     questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
@@ -207,6 +270,7 @@ function populateQuestionSelector() {
     const labelParts = [];
     if (set.grade) labelParts.push(`${set.grade} synp`);
     if (set.test) labelParts.push(`Test ${set.test}`);
+    if (set.subject) labelParts.push(set.subject);
     const totalQuestions = set.questions?.length || 0;
     option.value = index;
     option.textContent = labelParts.length
@@ -290,11 +354,16 @@ function applySelectedSet() {
     ? ` • Hil deslapky gözden geçirme: ${issueSummaries.join("; ")}`
     : "";
 
+  const subjectBreakdown =
+    Array.isArray(set.sourceSubjects) && set.sourceSubjects.length
+      ? ` • Dersler: ${set.sourceSubjects.join(", ")}`
+      : "";
+
   questionSetMeta.textContent = `${
     set.subject || set.title
   } • Synp: ${set.grade || "belli däl"} • Test: ${set.test || "-"} • Sorag sany: ${
     questions.length
-  } • Her soraga: ${TIME_PER_QUESTION} sek • Nädogry üçin: -${WRONG_ANSWER_PENALTY} sek${issueText}`;
+  } • Her soraga: ${TIME_PER_QUESTION} sek • Nädogry üçin: -${WRONG_ANSWER_PENALTY} sek${subjectBreakdown}${issueText}`;
   updateProgressLabel();
   syncProgressBar();
 }
