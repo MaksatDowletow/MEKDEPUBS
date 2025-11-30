@@ -1,114 +1,166 @@
 <!DOCTYPE html>
-<html lang="tk-TM">
+<html lang="tk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Onlaýn matematika we dil synaglary üçin interaktiw platforma"
+      content="Bilim synaglaryny ýerine ýetirip, üstünlikleriňi derrew gör!"
     />
     <link rel="stylesheet" href="./style.css" />
-    <title>4-nji synpyň matematika synagy</title>
+    <title>Bilimiňi syna • Onlaýn test platformasy</title>
   </head>
 
   <body>
-    <div class="containerNew">
-      <header>
-        <div class="brand">
-          <h1 id="top">Bilimiňi syna!</h1>
-          <small>4-nji synpyň matematika boýunça onlaýn synagy</small>
-        </div>
-        <div class="actions">
-          <form action="./highscore.html">
-            <button class="ghost-button" id="view-high-scores" type="submit">
-              Synagdan geçenler
-            </button>
-          </form>
-        </div>
-      </header>
+    <div class="app-shell">
+      <div class="background-ornaments" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+      </div>
 
-      <section class="status-panel" aria-label="Synag ýagdaýy">
-        <div class="pill" id="question-progress" aria-live="polite">
-          Soraglara taýýarlyk görülýär...
+      <header class="hero">
+        <div class="hero__text">
+          <p class="eyebrow">Interaktiw okuw platformasy</p>
+          <h1>Bilimiňi syna!</h1>
+          <p class="lede">
+            Sorag toplumy saýla, wagtyňy dolandyr we netijeleri derrew al. Platforma
+            matematika we dil sapaklary üçin taýýarlanan görnüşde işlenildi.
+          </p>
+          <div class="hero__actions">
+            <button id="start" disabled>Synaga başla</button>
+            <form action="./highscore.html">
+              <button class="ghost-button" id="view-high-scores" type="submit">
+                Synagdan geçenler
+              </button>
+            </form>
+          </div>
+          <div class="meta-row" id="meta-row">
+            <div class="meta-card">
+              <span class="label">Synag toplumy</span>
+              <div class="value" id="meta-title">Saýlanmady</div>
+            </div>
+            <div class="meta-card">
+              <span class="label">Synp • Test</span>
+              <div class="value" id="meta-grade">-</div>
+            </div>
+            <div class="meta-card">
+              <span class="label">Her soraga wagt</span>
+              <div class="value" id="meta-time">0 sek</div>
+            </div>
+            <div class="meta-card">
+              <span class="label">Nädogry üçin jerime</span>
+              <div class="value" id="meta-penalty">0 sek</div>
+            </div>
+          </div>
         </div>
-        <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
-          Wagyt/baha: <span id="timer">0</span>
-        </div>
-        <div class="progress-track" role="presentation">
-          <div class="progress-bar" id="progress-bar"></div>
-        </div>
-      </section>
-
-      <main class="quiz">
-        <div id="quiz-start">
-          <div class="landing" id="start-screen">
-            <h2 id="and">Kalkulýatorda işlemek gadagan!</h2>
-            <div class="callouts">
-              <div class="callout">
-                <strong>Wagtyňyz çäklidir.</strong> Sorag sanyna we synp derejäňe görä
-                30–75 sekunt aralygynda wagt bellenýär. Nädogry jogap şol soragyň
-                wagtynyň takmynan 25%-i möçberinde aýrylar.
+        <div class="hero__panel">
+          <div class="panel">
+            <div class="panel__header">
+              <div>
+                <p class="label">Synag toplumy</p>
+                <h2>Toplumy saýlaň</h2>
               </div>
-              <div class="callout">
-                <strong>Üns beriň.</strong> Depderçe ulanyň we jogaplaryňyzy ünsli
-                barlaň.
+              <div class="pill" id="question-progress" aria-live="polite">
+                Soraglara taýýarlyk görülýär...
               </div>
             </div>
+
             <div class="selector-row">
-              <label for="question-set" class="selector-label"
-                >Synag toplumy:</label
-              >
+              <label for="question-set" class="selector-label">Toplumy saýla</label>
               <select id="question-set" aria-label="Synag toplumy saýlaň">
                 <option>Ýüklenýär...</option>
               </select>
             </div>
             <p id="question-set-meta" class="selector-meta"></p>
-            <button id="start" disabled>Synaga başlaň</button>
-            <p class="helper-text">
-              Üçin baryp görmek üçin synag toplumy saýlaň, soň "Synaga başlaň"
-              düwmesine basyň. Her soragdan soň ýagdaý güýçlendirilip görkeziler.
+
+            <div class="callouts">
+              <div class="callout">
+                <strong>Wagtyňyz çäklidir.</strong> Sorag sanyna we synp derejäňe görä 30–75
+                sekunt aralygynda wagt bellenýär. Nädogry jogap şol soragyň wagtynyň takmynan
+                25%-i möçberinde aýrylar.
+              </div>
+              <div class="callout">
+                <strong>Üns beriň.</strong> Depderçe ulanyň, jogaplary diňläň we her saýlawy
+                ünsli barlaň.
+              </div>
+            </div>
+
+            <div class="status-panel" aria-label="Synag ýagdaýy">
+              <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
+                Wagyt/baha: <span id="timer">0</span>
+              </div>
+              <div class="progress-track" role="presentation">
+                <div class="progress-bar" id="progress-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="quiz">
+        <section class="landing" id="start-screen">
+          <div class="info-grid">
+            <div>
+              <p class="eyebrow">Tertip</p>
+              <h3 id="and">Kalkulýatorda işlemek gadagan!</h3>
+              <p class="helper-text">
+                Üçin baryp görmek üçin synag toplumy saýlaň, soň "Synaga başlaň" düwmesine
+                basyň. Her soragdan soň ýagdaý güýçlendirilip görkeziler.
+              </p>
+            </div>
+            <ul class="feature-list">
+              <li>Auto derňew: Soraglar doly däl bolsa awtomatiki düzedilýär.</li>
+              <li>Progress bar: Alnyp barýan ugur real wagtda görkezilýär.</li>
+              <li>Seslenme: Jogabyň dogry ýa-da nädogrylygy derrew aýdylýar.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="hide" id="questions" aria-live="polite">
+          <div class="card">
+            <div class="card__header">
+              <p class="label">Aktiw sorag</p>
+              <div class="chip" id="chip-index">0/0</div>
+            </div>
+            <h2 id="question-words"></h2>
+            <div class="options" id="options"></div>
+          </div>
+        </section>
+
+        <section class="hide" id="quiz-end">
+          <div class="card">
+            <div class="card__header">
+              <p class="label">Netije</p>
+              <div class="chip chip-success">Tamamlandy</div>
+            </div>
+            <h2>Üstünlik!</h2>
+            <p>
+              Siziň gazanan netijäňiz: <strong><span id="score-final"></span></strong>
             </p>
+            <div class="form-row" aria-label="Netije goşmak">
+              <label for="name">Öz adyňyzy giriziň:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                maxlength="20"
+                minlength="2"
+                aria-label="Adyňyzy giriziň"
+                autocomplete="name"
+                required
+              />
+              <button id="submit-score" aria-label="Netijäni tassykla">Barla</button>
+              <span class="input-hint" id="name-hint">
+                Adyňyz 2–20 harp arasynda bolmalydyr.
+              </span>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div class="hide" id="questions" aria-live="polite">
-          <h2 id="question-words"></h2>
-          <div class="options" id="options"></div>
-        </div>
-
-        <div class="hide" id="quiz-end">
-          <h2>Üstünlik!</h2>
-          <p>
-            Siziň gazanan netijäňiz:
-            <strong><span id="score-final"></span></strong>
-          </p>
-          <div class="form-row" aria-label="Netije goşmak">
-            <label for="name">Öz adyňyzy giriziň:</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              maxlength="20"
-              minlength="2"
-              aria-label="Adyňyzy giriziň"
-              autocomplete="name"
-              required
-            />
-            <button id="submit-score" aria-label="Netijäni tassykla">Barla</button>
-            <span class="input-hint" id="name-hint">
-              Adyňyz 2–20 harp arasynda bolmalydyr.
-            </span>
-          </div>
-        </div>
-
-        <div
-          id="feedback"
-          class="feedback hide"
-          role="status"
-          aria-live="polite"
-        ></div>
+        <div id="feedback" class="feedback hide" role="status" aria-live="polite"></div>
       </main>
     </div>
+
     <script src="./question-bank.js"></script>
     <script src="./script.js"></script>
   </body>
