@@ -415,10 +415,10 @@ function quizEnd() {
 
 // Stop when timer hits 0
 function clockTick() {
-  time--;
+  time = Math.max(0, time - 1);
   timerEl.textContent = time;
-  if (time <= 0) {
-    time = 0;
+
+  if (time === 0) {
     quizEnd();
   }
 }
