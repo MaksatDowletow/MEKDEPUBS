@@ -91,6 +91,8 @@ async function loadQuestionBank() {
   ];
 
   questionSetSelect.innerHTML = "<option>Ýüklenýär...</option>";
+  questionSetMeta.textContent = "Synag toplumy ýüklenerkä garaşyň.";
+  questionSetSelect.disabled = true;
   startBtn.disabled = true;
 
   const useQuestionData = (data, sourceLabel = "") => {
@@ -114,7 +116,8 @@ async function loadQuestionBank() {
     }
 
     populateQuestionSelector();
-    applySelectedSet();
+    questionSetSelect.disabled = false;
+    questionSetMeta.textContent = `${questionSets.length} sany synag toplumy elýeterli. Birini saýlaň.`;
 
     if (sourceLabel) {
       questionSetMeta.textContent = `${questionSetMeta.textContent} • Çeşme: ${sourceLabel}`;
@@ -129,7 +132,6 @@ async function loadQuestionBank() {
     const data = await response.json();
     if (Array.isArray(data) && data.length) {
       useQuestionData(data, "JSON");
-      startBtn.disabled = false;
       return;
     }
   } catch (error) {
@@ -139,17 +141,23 @@ async function loadQuestionBank() {
   // Preferred inline bank injected via question-bank.js to avoid fetch/CORS issues
   if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
     useQuestionData(window.questionBankData, "JS");
-    startBtn.disabled = false;
     return;
   }
 
   // Final fallback: built-in demo questions so UI never stays empty
   useQuestionData(fallbackQuestionBank, "Ätiýaç");
-  startBtn.disabled = false;
 }
 
 function populateQuestionSelector() {
   questionSetSelect.innerHTML = "";
+
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = "Synag toplumy saýlaň";
+  placeholderOption.disabled = true;
+  placeholderOption.selected = true;
+  questionSetSelect.appendChild(placeholderOption);
+
   questionSets.forEach((set, index) => {
     const option = document.createElement("option");
     const labelParts = [];
@@ -164,8 +172,21 @@ function populateQuestionSelector() {
 }
 
 function applySelectedSet() {
-  const selection = Number(questionSetSelect.value) || 0;
-  const set = questionSets[selection];
+  const selection = questionSetSelect.value;
+
+  if (selection === "") {
+    questions = [];
+    activeSet = null;
+    questionSetMeta.textContent = "Synag toplumyndan birini saýlaň.";
+    startBtn.disabled = true;
+    timerEl.textContent = 0;
+    updateProgressLabel();
+    syncProgressBar();
+    return;
+  }
+
+  const numericSelection = Number(selection);
+  const set = questionSets[numericSelection];
   if (!set) {
     questions = [];
     questionSetMeta.textContent = "Soraglar tapylmady.";
@@ -321,7 +342,7 @@ function saveHighscore() {
 // Update status bar label and progress indicator
 function updateProgressLabel(isFinished = false) {
   if (!questions.length) {
-    questionProgressEl.textContent = "Sorag toplumy taýýar edilýär";
+    questionProgressEl.textContent = "Synag toplumy saýlanmady.";
     return;
   }
 
