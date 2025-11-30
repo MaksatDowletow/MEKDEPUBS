@@ -1,5 +1,3 @@
-<!--index.html-->
-
 <!DOCTYPE html>
 <html lang="tk-TM">
   <head>
@@ -12,28 +10,36 @@
   <body>
     <div class="containerNew">
       <header>
-        <div>
+        <div class="brand">
+          <h1 id="top">Bilimiňi syna!</h1>
+          <small>4-nji synpyň matematika boýunça onlaýn synagy</small>
+        </div>
+        <div class="actions">
           <form action="./highscore.html">
-            <button class="scores-header" id="view-high-scores">
-              Synagdan geçenler.
+            <button class="ghost-button" id="view-high-scores" type="submit">
+              Synagdan geçenler
             </button>
           </form>
-        </div>
-
-        <div class="timer">
-          <p>
-            Wagyt/baha:
-            <span id="timer"> 0 </span>
-          </p>
+          <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
+            Wagyt/baha: <span id="timer">0</span>
+          </div>
         </div>
       </header>
 
       <main class="quiz">
         <div id="quiz-start">
           <div class="landing" id="start-screen">
-            <h1 id="top">Bilimiňi syna!</h1>
-            <h1 id="and">Kalkulýatorda işlemek gadagan!!!</h1>
-            <h1>4-nji synpyň Matematika boýunça synag.</h1>
+            <h2 id="and">Kalkulýatorda işlemek gadagan!</h2>
+            <div class="callouts">
+              <div class="callout">
+                <strong>Wagtyňyz çäklidir.</strong> Her soraga 1 minut wagt berilýär.
+                Nädogry jogap wagtyňyzdan/balyňyzdan 15 sekund aýrylar.
+              </div>
+              <div class="callout">
+                <strong>Üns beriň.</strong> Depderçe ulanyň we jogaplaryňyzy ünsli
+                barlaň.
+              </div>
+            </div>
             <div class="selector-row">
               <label for="question-set" class="selector-label"
                 >Synag toplumy:</label
@@ -42,21 +48,12 @@
                 <option>Ýüklenýär...</option>
               </select>
             </div>
-            <h2>Haýyş edäris!!!</h2>
-            <h3>Depderçe ulanyň!</h3>
-            <p>
-              <strong>
-                Indiki sorglara jogap bermäge synanyşyň! Wagtyňyz çäklidigini
-                unutmaň! Her soraga 1 minut wagt berilýär, nädogry jogaplary
-                wagtyňyzdan/balyňyzdan 15 sekund aýyrylyp jezalandyrylar!
-              </strong>
-            </p>
             <p id="question-set-meta" class="selector-meta"></p>
-            <button id="start" disabled>Synaga başlaň!</button>
+            <button id="start" disabled>Synaga başlaň</button>
           </div>
         </div>
 
-        <div class="hide" id="questions">
+        <div class="hide" id="questions" aria-live="polite">
           <h2 id="question-words"></h2>
           <div class="options" id="options"></div>
         </div>
@@ -65,10 +62,10 @@
           <h2>Üstünlik!</h2>
           <p>
             Siziň gazanan netijäňiz:
-            <span id="score-final"> </span>
+            <strong><span id="score-final"></span></strong>
           </p>
-          <p>
-            Öz adyňyzy giriziň:
+          <div class="form-row" aria-label="Netije goşmak">
+            <label for="name">Öz adyňyzy giriziň:</label>
             <input
               type="text"
               id="name"
@@ -79,7 +76,7 @@
               required
             />
             <button id="submit-score" aria-label="Netijäni tassykla">Barla</button>
-          </p>
+          </div>
         </div>
 
         <div
