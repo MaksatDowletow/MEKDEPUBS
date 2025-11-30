@@ -1,21 +1,30 @@
 // highScore.js
 
-let scoresBtn = document.querySelector("#view-high-scores");
-
-// “LocalStorage” -den bal alyp,
-//  öňki ballary tertipläň
-
+// “LocalStorage” -den bal alyp, öňki ballary tertipläň
 function printHighscores() {
   let highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
-  highscores.sort(function (a, b) {
-    return b.score - a.score;
-  });
-  highscores.forEach(function (score) {
-    let liTag = document.createElement("li");
-    liTag.textContent = score.name + " - " + score.score;
-    let olEl = document.getElementById("highscores");
-    olEl.appendChild(liTag);
-  });
+  let list = document.getElementById("highscores");
+  list.innerHTML = "";
+
+  if (!highscores.length) {
+    let empty = document.createElement("li");
+    empty.textContent = "Ýatda saklanan netije ýok.";
+    empty.setAttribute("aria-live", "polite");
+    list.appendChild(empty);
+    document.getElementById("clear").disabled = true;
+    return;
+  }
+
+  document.getElementById("clear").disabled = false;
+  highscores
+    .sort(function (a, b) {
+      return b.score - a.score;
+    })
+    .forEach(function (score, index) {
+      let liTag = document.createElement("li");
+      liTag.textContent = `${index + 1}. ${score.name} - ${score.score}`;
+      list.appendChild(liTag);
+    });
 }
 
 // Clear previous scores when users click clear

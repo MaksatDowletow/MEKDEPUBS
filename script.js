@@ -4,8 +4,7 @@ let questions = [];
 let questionSets = [];
 let activeSet = null;
 
-// Get Dom Elements
-
+// Get DOM Elements
 let questionsEl = document.querySelector("#questions");
 let timerEl = document.querySelector("#timer");
 let choicesEl = document.querySelector("#options");
@@ -13,15 +12,16 @@ let submitBtn = document.querySelector("#submit-score");
 let startBtn = document.querySelector("#start");
 let nameEl = document.querySelector("#name");
 let feedbackEl = document.querySelector("#feedback");
-let reStartBtn = document.querySelector("#restart");
 let questionSetSelect = document.querySelector("#question-set");
 let questionSetMeta = document.querySelector("#question-set-meta");
 
-// Quiz's initial state
+// Quiz state
 let currentQuestionIndex = 0;
 const WRONG_ANSWER_PENALTY = 15;
-let time = questions.length * 60;
+const TIME_PER_QUESTION = 60;
+let time = questions.length * TIME_PER_QUESTION;
 let timerId;
+let isQuizActive = false;
 
 // Load question sets from generated bank
 async function loadQuestionBank() {
@@ -31,7 +31,6 @@ async function loadQuestionBank() {
     questionSets = data;
     populateQuestionSelector();
     applySelectedSet();
-    startBtn.disabled = false;
   } catch (error) {
     console.error("Sorag bazasyny ýüklemekde säwlik: ", error);
     questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
@@ -60,36 +59,41 @@ function applySelectedSet() {
   if (!set) {
     questions = [];
     questionSetMeta.textContent = "Soraglar tapylmady.";
+    startBtn.disabled = true;
+    timerEl.textContent = 0;
     return;
   }
   activeSet = set;
   questions = (set.questions || []).filter((q) => q.prompt);
   currentQuestionIndex = 0;
-  time = questions.length * 60;
+  time = questions.length * TIME_PER_QUESTION;
+  timerEl.textContent = time || 0;
+  startBtn.disabled = !questions.length;
   questionSetMeta.textContent = `${set.subject} • Synp: ${
     set.grade || "belli däl"
-  } • Test: ${set.test || "-"}`;
+  } • Test: ${set.test || "-"} • Sorag sany: ${questions.length}`;
 }
 
 // Start quiz and hide frontpage
-
 function quizStart() {
   if (!questions.length) {
     alert("Sorag toplumy ýüklendi diýip hasaplanylmaýar.");
     return;
   }
   currentQuestionIndex = 0;
-  time = questions.length * 60;
-  timerId = setInterval(clockTick, 1000);
+  time = questions.length * TIME_PER_QUESTION;
   timerEl.textContent = time;
+  startBtn.disabled = true;
+  questionSetSelect.disabled = true;
+  isQuizActive = true;
+  timerId = setInterval(clockTick, 1000);
   let landingScreenEl = document.getElementById("start-screen");
   landingScreenEl.setAttribute("class", "hide");
   questionsEl.removeAttribute("class");
   getQuestion();
 }
 
-// Loop through array of questions and
-// Answers and create list with buttons
+// Loop through array of questions and create list with buttons
 function getQuestion() {
   let currentQuestion = questions[currentQuestionIndex];
   let promptEl = document.getElementById("question-words");
@@ -107,30 +111,23 @@ function getQuestion() {
   });
 }
 
-// Check for right answers and deduct
-// Time for wrong answer, go to next question
-
+// Check for right answers and deduct time for wrong answer
 function questionClick() {
+  if (!isQuizActive) return;
+
   const answer = questions[currentQuestionIndex].answer;
   if (!answer) {
-    feedbackEl.textContent = "Jogaplar maglumat üçin berilýär.";
-    feedbackEl.style.color = "black";
+    showFeedback("Jogaplar maglumat üçin berilýär.", "neutral");
   } else if (this.value !== answer) {
     time -= WRONG_ANSWER_PENALTY;
     if (time < 0) {
       time = 0;
     }
     timerEl.textContent = time;
-    feedbackEl.textContent = "Nädogry! Dogry jogap:  " + answer;
-    feedbackEl.style.color = "red";
+    showFeedback("Nädogry! Dogry jogap:  " + answer, "error");
   } else {
-    feedbackEl.textContent = "Jogap dogry!";
-    feedbackEl.style.color = "green";
+    showFeedback("Jogap dogry!", "success");
   }
-  feedbackEl.setAttribute("class", "feedback");
-  setTimeout(function () {
-    feedbackEl.setAttribute("class", "feedback hide");
-  }, 3000);
   currentQuestionIndex++;
   if (currentQuestionIndex === questions.length) {
     quizEnd();
@@ -139,30 +136,45 @@ function questionClick() {
   }
 }
 
-// Soraglary gizlemek bilen wiktorinany tamamlaň,
-//taýmeri duruzyň we jemleýji balyňyzy görkeziň
+// Render feedback with visual status classes
+function showFeedback(message, status) {
+  feedbackEl.textContent = message;
+  feedbackEl.className = "feedback";
+  if (status === "success") {
+    feedbackEl.classList.add("success");
+  } else if (status === "error") {
+    feedbackEl.classList.add("error");
+  }
+  setTimeout(function () {
+    feedbackEl.className = "feedback hide";
+  }, 2500);
+}
 
+// Finish quiz, stop timer, and surface final score
 function quizEnd() {
+  if (!isQuizActive) return;
+  isQuizActive = false;
   clearInterval(timerId);
   let endScreenEl = document.getElementById("quiz-end");
   endScreenEl.removeAttribute("class");
   let finalScoreEl = document.getElementById("score-final");
-  finalScoreEl.textContent = time;
+  finalScoreEl.textContent = `${time} sek`;
   questionsEl.setAttribute("class", "hide");
+  startBtn.disabled = false;
+  questionSetSelect.disabled = false;
 }
 
-// Taýmer 0-a ýetýän bolsa, wiktorina gutar
-
+// Stop when timer hits 0
 function clockTick() {
   time--;
   timerEl.textContent = time;
   if (time <= 0) {
+    time = 0;
     quizEnd();
   }
 }
 
-// Ballary ulanyjylaryň ady bilen birlikde ýerli ammarda saklaň
-
+// Save scores alongside a name in localStorage
 function saveHighscore() {
   let name = nameEl.value.trim();
   if (name === "") {
@@ -188,7 +200,6 @@ function saveHighscore() {
 }
 
 // Save users' score after pressing enter
-
 function checkForEnter(event) {
   if (event.key === "Enter") {
     saveHighscore();
@@ -197,11 +208,9 @@ function checkForEnter(event) {
 nameEl.onkeyup = checkForEnter;
 
 // Save users' score after clicking submit
-
 submitBtn.onclick = saveHighscore;
 
 // Start quiz after clicking start quiz
-
 startBtn.onclick = quizStart;
 
 questionSetSelect.onchange = applySelectedSet;
