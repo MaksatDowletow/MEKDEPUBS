@@ -172,7 +172,12 @@ async function loadQuestionBank() {
   questionSetMeta.textContent = "Synag toplumy ýüklenerkä garaşyň.";
   questionSetSelect.disabled = true;
   startBtn.disabled = true;
-  questionSets = sortQuestionSets(normalizeQuestionSets(window.UBS_REGISTRY || []));
+
+  const rawBank = Array.isArray(window.UBS_REGISTRY) && window.UBS_REGISTRY.length
+    ? window.UBS_REGISTRY
+    : window.QUESTION_BANK || [];
+
+  questionSets = sortQuestionSets(normalizeQuestionSets(rawBank));
 
   if (!questionSets.length) {
     questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
