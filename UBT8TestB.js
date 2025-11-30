@@ -544,7 +544,7 @@ let questions = [
     },
 
     { prompt: "Buga öwürmek formulasy?",
-      options: ["Q = qm", "Q = λm", ""],
+      options: ["Q = qm", "Q = λm", "Q = cmΔT"],
       answer: "Q = λm"
     },
 

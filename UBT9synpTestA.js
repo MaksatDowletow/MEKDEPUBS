@@ -112,7 +112,7 @@ let questions = [
     prompt: "На какие вопросы отвечают обстоятельства места?",
     options: [
       "почему? отчего?",
-      "почему? отчего?",
+      "когда? как долго?",
       "где? куда? откуда? докуда?",
     ],
     answer: "где? куда? откуда? докуда?",
@@ -337,7 +337,7 @@ let questions = [
   {
     prompt:
       "Osman imperiýasynyň Konstitusiýasy näçenji ýylda kabul edilýär?",
-    options: ["1889 ý.", "1861 ý.", "1867 ý.", "1887 ý."],
+    options: ["1889 ý.", "1861 ý.", "1867 ý.", "1876 ý."],
     answer: "1876 ý.", // !!! dokumentde anyk görkezilmeýän bolsa, bu setri boş goýup üýtgedip bilersiňiz
   },
 
@@ -834,14 +834,14 @@ let questions = [
 
   {
     prompt: "Kolontitul näme?",
-    options: [
-      "hekaýanyň ady, baplar, bölümler, awtoryň familiýasy",
-      "sahypalaryň ählisiniň ýokarsynda ýa-da aşagynda gaýtalanyp gelýän tekst",
-      "Word-da sahypalary belgilemek üçin ulanylýan menýu",
-    ],
-    answer:
-      "sahypalaryň ählisiniň ýa-da aglabasynyň ýokarsynda ýa-da aşagynda gaýtalanyp gelýän tekst",
-  },
+      options: [
+        "hekaýanyň ady, baplar, bölümler, awtoryň familiýasy",
+        "sahypalaryň ählisiniň ýokarsynda ýa-da aşagynda gaýtalanyp gelýän tekst",
+        "Word-da sahypalary belgilemek üçin ulanylýan menýu",
+      ],
+      answer:
+        "sahypalaryň ählisiniň ýokarsynda ýa-da aşagynda gaýtalanyp gelýän tekst",
+    },
 
   {
     prompt: "Kompýuter grafikasy näme?",
