@@ -28,28 +28,76 @@ let isQuizActive = false;
 
 // Load question sets from generated bank
 async function loadQuestionBank() {
-  const useQuestionData = (data) => {
-    questionSets = data || [];
+  // Minimal backup data so the app still works if remote files fail to load
+  const fallbackQuestionBank = [
+    {
+      title: "Ätiýaç toplumy",
+      grade: "4",
+      test: "A",
+      prefix: "Demo",
+      subject: "Matematika",
+      questions: [
+        {
+          prompt: "2 + 2 = ?",
+          options: ["3", "4", "5"],
+          answer: "4",
+        },
+        {
+          prompt: "5 × 3 = ?",
+          options: ["8", "15", "53"],
+          answer: "15",
+        },
+      ],
+    },
+  ];
+
+  questionSetSelect.innerHTML = "<option>Ýüklenýär...</option>";
+  startBtn.disabled = true;
+
+  const useQuestionData = (data, sourceLabel = "") => {
+    questionSets = Array.isArray(data) ? data : [];
+
+    if (!questionSets.length) {
+      questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
+      questionSetMeta.textContent =
+        "Soraglar ýüklenerkä ýalňyşlyk ýüze çykdy. Täzeden synanyşyň.";
+      updateProgressLabel();
+      return;
+    }
+
     populateQuestionSelector();
     applySelectedSet();
+
+    if (sourceLabel) {
+      questionSetMeta.textContent = `${questionSetMeta.textContent} • Çeşme: ${sourceLabel}`;
+    }
   };
 
-  // Preferred: inline bank injected via question-bank.js to avoid fetch/CORS issues
+  try {
+    const response = await fetch("./question-bank.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    if (Array.isArray(data) && data.length) {
+      useQuestionData(data, "JSON");
+      startBtn.disabled = false;
+      return;
+    }
+  } catch (error) {
+    console.error("Sorag bazasyny JSON arkaly ýüklemekde säwlik: ", error);
+  }
+
+  // Preferred inline bank injected via question-bank.js to avoid fetch/CORS issues
   if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
-    useQuestionData(window.questionBankData);
+    useQuestionData(window.questionBankData, "JS");
+    startBtn.disabled = false;
     return;
   }
 
-  // Fallback: try to fetch JSON when running from a web server
-  try {
-    const response = await fetch("./question-bank.json");
-    const data = await response.json();
-    useQuestionData(data);
-  } catch (error) {
-    console.error("Sorag bazasyny ýüklemekde säwlik: ", error);
-    questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
-    startBtn.disabled = true;
-  }
+  // Final fallback: built-in demo questions so UI never stays empty
+  useQuestionData(fallbackQuestionBank, "Ätiýaç");
+  startBtn.disabled = false;
 }
 
 function populateQuestionSelector() {
