@@ -1,21 +1,41 @@
 // highScore.js
 
+function loadHighscores() {
+  const stored = window.localStorage.getItem("highscores");
+  if (!stored) return [];
+
+  try {
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("Ýatda saklanan netije bozuldy, sanaw arassalanyp goýberiler.", error);
+    window.localStorage.removeItem("highscores");
+    return [];
+  }
+}
+
 // “LocalStorage” -den bal alyp, öňki ballary tertipläň
 function printHighscores() {
-  let highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
-  let list = document.getElementById("highscores");
+  const highscores = loadHighscores();
+  const list = document.getElementById("highscores");
+  const clearButton = document.getElementById("clear");
+  const subtitleEl = document.getElementById("scores-subtitle");
+
   list.innerHTML = "";
 
   if (!highscores.length) {
-    let empty = document.createElement("li");
+    const empty = document.createElement("li");
     empty.textContent = "Ýatda saklanan netije ýok.";
     empty.setAttribute("aria-live", "polite");
     list.appendChild(empty);
-    document.getElementById("clear").disabled = true;
+    clearButton.disabled = true;
+    subtitleEl.textContent = "Ýatda saklanan netije ýok.";
     return;
   }
 
-  document.getElementById("clear").disabled = false;
+  clearButton.disabled = false;
+  subtitleEl.textContent = `${highscores.length} sany netije ýatda saklandy.`;
+
   highscores
     .sort(function (a, b) {
       if (b.score === a.score) {
@@ -23,15 +43,15 @@ function printHighscores() {
       }
       return b.score - a.score;
     })
-    .forEach(function (score, index) {
-      let liTag = document.createElement("li");
+    .forEach(function (score) {
+      const liTag = document.createElement("li");
       const safeName = score.name || "(At girizilmedi)";
       const safeScore = Number.isFinite(score.score) ? score.score : 0;
       const correct = Number.isFinite(score.correct) ? score.correct : "-";
       const total = Number.isFinite(score.total) ? score.total : "-";
       const timeLeft = Number.isFinite(score.timeLeft) ? score.timeLeft : 0;
       const setTitle = score.setTitle || "Toplum";
-      liTag.textContent = `${index + 1}. ${safeName} - ${safeScore} bal • Dogry: ${correct}/${total} • Galan wagt: ${timeLeft} sek • ${setTitle}`;
+      liTag.textContent = `${safeName} - ${safeScore} bal • Dogry: ${correct}/${total} • Galan wagt: ${timeLeft} sek • ${setTitle}`;
       list.appendChild(liTag);
     });
 }
