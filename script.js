@@ -25,12 +25,23 @@ let isQuizActive = false;
 
 // Load question sets from generated bank
 async function loadQuestionBank() {
+  const useQuestionData = (data) => {
+    questionSets = data || [];
+    populateQuestionSelector();
+    applySelectedSet();
+  };
+
+  // Preferred: inline bank injected via question-bank.js to avoid fetch/CORS issues
+  if (Array.isArray(window.questionBankData) && window.questionBankData.length) {
+    useQuestionData(window.questionBankData);
+    return;
+  }
+
+  // Fallback: try to fetch JSON when running from a web server
   try {
     const response = await fetch("./question-bank.json");
     const data = await response.json();
-    questionSets = data;
-    populateQuestionSelector();
-    applySelectedSet();
+    useQuestionData(data);
   } catch (error) {
     console.error("Sorag bazasyny ýüklemekde säwlik: ", error);
     questionSetSelect.innerHTML = "<option>Ýüklemekde säwlik</option>";
