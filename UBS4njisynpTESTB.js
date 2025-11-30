@@ -159,7 +159,7 @@ let questions = [
     options: [
       "100 sm = 1 m     1 sag = 60 min",
       "100 sm = 10 m    1 sag = 60 s",
-      "100 sm = 1 m     1 sag = 60 min"
+      "100 sm = 1 m     1 sag = 60 s"
     ],
     answer: "100 sm = 1 m     1 sag = 60 min",
   },

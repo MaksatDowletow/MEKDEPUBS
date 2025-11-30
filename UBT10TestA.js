@@ -743,13 +743,13 @@ let questions = [
   {
     prompt:
       "95. Faradeýiň elektromagnit induksiýasy boýunça elektrik toguny almagy ilkinji gezek haçan başardygyny görkezýän ýyl haýsy wariantda dogry?",
-    options: [
-      "1832-nji ýylyň 28-nji awgusty",
-      "1981-nji ýylyň 5-nji oktýabry",
-      "1920-nji ýylyň 1-nji maýy",
-    ],
-    answer: "1832-nji面的 28-nji awgusty",
-  },
+      options: [
+        "1832-nji ýylyň 28-nji awgusty",
+        "1981-nji ýylyň 5-nji oktýabry",
+        "1920-nji ýylyň 1-nji maýy",
+      ],
+      answer: "1832-nji ýylyň 28-nji awgusty",
+    },
 
   // ========== INFORMATIKA ==========
 
