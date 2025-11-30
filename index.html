@@ -3,8 +3,10 @@
 <!DOCTYPE html>
 <html lang="tk-TM">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
-    <title>4th graet Mathematik test</title>
+    <title>4-nji synpyň matematika synagy</title>
   </head>
 
   <body>
@@ -38,7 +40,7 @@
               <strong>
                 Indiki sorglara jogap bermäge synanyşyň! Wagtyňyz çäklidigini
                 unutmaň! Her soraga 1 minut wagt berilýär, nädogry jogaplary
-                wagtyňyzdan/balyňyzdan 30 sekund aýyrylyp jezalandyrylar!
+                wagtyňyzdan/balyňyzdan 15 sekund aýyrylyp jezalandyrylar!
               </strong>
             </p>
             <button id="start">Synaga başlaň!</button>
@@ -58,12 +60,25 @@
           </p>
           <p>
             Öz adyňyzy giriziň:
-            <input type="text" id="name" max="3" />
-            <button id="submit-score">Barla</button>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              maxlength="20"
+              aria-label="Adyňyzy giriziň"
+              autocomplete="name"
+              required
+            />
+            <button id="submit-score" aria-label="Netijäni tassykla">Barla</button>
           </p>
         </div>
 
-        <div id="feedback" class="feedback hide"></div>
+        <div
+          id="feedback"
+          class="feedback hide"
+          role="status"
+          aria-live="polite"
+        ></div>
       </main>
     </div>
     <script src="./script.js"></script>

@@ -91,6 +91,7 @@ let reStartBtn = document.querySelector("#restart");
 
 // Quiz's initial state
 let currentQuestionIndex = 0;
+const WRONG_ANSWER_PENALTY = 15;
 let time = questions.length * 60;
 let timerId;
 
@@ -126,7 +127,7 @@ function getQuestion() {
 
 function questionClick() {
   if (this.value !== questions[currentQuestionIndex].answer) {
-    time -= 60;
+    time -= WRONG_ANSWER_PENALTY;
     if (time < 0) {
       time = 0;
     }
@@ -176,17 +177,26 @@ function clockTick() {
 
 function saveHighscore() {
   let name = nameEl.value.trim();
-  if (name !== "") {
-    let highscores =
-      JSON.parse(window.localStorage.getItem("highscores")) || [];
-    let newScore = {
-      score: time,
-      name: name,
-    };
-    highscores.push(newScore);
-    window.localStorage.setItem("highscores", JSON.stringify(highscores));
-    alert(name + " Siziň balyňyz ýatda saklandy");
+  if (name === "") {
+    alert("Adyňyz boş bolmaly däl.");
+    return;
   }
+
+  if (name.length > nameEl.maxLength) {
+    alert(
+      "Adyňyz gysga bolmaly. Uzaklygy: " + nameEl.maxLength + " harpdan köp bolmasyn."
+    );
+    return;
+  }
+
+  let highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
+  let newScore = {
+    score: time,
+    name: name,
+  };
+  highscores.push(newScore);
+  window.localStorage.setItem("highscores", JSON.stringify(highscores));
+  alert(name + " Siziň balyňyz ýatda saklandy");
 }
 
 // Save users' score after pressing enter
@@ -194,7 +204,6 @@ function saveHighscore() {
 function checkForEnter(event) {
   if (event.key === "Enter") {
     saveHighscore();
-    alert(" Siziň balyňyz ýatda saklandy");
   }
 }
 nameEl.onkeyup = checkForEnter;
