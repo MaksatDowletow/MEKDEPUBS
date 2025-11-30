@@ -5,17 +5,22 @@ let questionSets = [];
 let activeSet = null;
 
 // Get DOM Elements
-let questionsEl = document.querySelector("#questions");
-let timerEl = document.querySelector("#timer");
-let choicesEl = document.querySelector("#options");
-let submitBtn = document.querySelector("#submit-score");
-let startBtn = document.querySelector("#start");
-let nameEl = document.querySelector("#name");
-let feedbackEl = document.querySelector("#feedback");
-let questionSetSelect = document.querySelector("#question-set");
-let questionSetMeta = document.querySelector("#question-set-meta");
-let questionProgressEl = document.querySelector("#question-progress");
-let progressBarEl = document.querySelector("#progress-bar");
+const questionsEl = document.querySelector("#questions");
+const timerEl = document.querySelector("#timer");
+const choicesEl = document.querySelector("#options");
+const submitBtn = document.querySelector("#submit-score");
+const startBtn = document.querySelector("#start");
+const nameEl = document.querySelector("#name");
+const feedbackEl = document.querySelector("#feedback");
+const questionSetSelect = document.querySelector("#question-set");
+const questionSetMeta = document.querySelector("#question-set-meta");
+const questionProgressEl = document.querySelector("#question-progress");
+const progressBarEl = document.querySelector("#progress-bar");
+const metaTitleEl = document.querySelector("#meta-title");
+const metaGradeEl = document.querySelector("#meta-grade");
+const metaTimeEl = document.querySelector("#meta-time");
+const metaPenaltyEl = document.querySelector("#meta-penalty");
+const chipIndexEl = document.querySelector("#chip-index");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -28,6 +33,13 @@ let scorePerQuestion = 0;
 let time = questions.length * TIME_PER_QUESTION;
 let timerId;
 let isQuizActive = false;
+
+// Utility
+function formatGradeTest(grade, test) {
+  const gradeLabel = grade ? `${grade} synp` : "Belli däl";
+  const testLabel = test ? `Test ${test}` : "-";
+  return `${gradeLabel} • ${testLabel}`;
+}
 
 // Normalize question sets to avoid unusable/empty entries
 function normalizeQuestionSets(rawSets) {
@@ -138,6 +150,19 @@ function computeTimingConfig(grade, questionCount) {
   const totalTime = Math.max(questionCount * perQuestion, perQuestion);
 
   return { perQuestion, penalty, totalTime };
+}
+
+function updateMetaCards({
+  title = "Saýlanmady",
+  grade,
+  test,
+  perQuestion = 0,
+  penalty = 0,
+} = {}) {
+  metaTitleEl.textContent = title || "Saýlanmady";
+  metaGradeEl.textContent = formatGradeTest(grade, test);
+  metaTimeEl.textContent = `${perQuestion} sek`;
+  metaPenaltyEl.textContent = `-${penalty} sek`;
 }
 
 // Load question sets from generated bank
@@ -257,6 +282,7 @@ function applySelectedSet() {
     questionSetMeta.textContent = "Synag toplumyndan birini saýlaň.";
     startBtn.disabled = true;
     timerEl.textContent = 0;
+    updateMetaCards();
     updateProgressLabel();
     syncProgressBar();
     return;
@@ -269,6 +295,7 @@ function applySelectedSet() {
     questionSetMeta.textContent = "Soraglar tapylmady.";
     startBtn.disabled = true;
     timerEl.textContent = 0;
+    updateMetaCards();
     updateProgressLabel();
     return;
   }
@@ -282,6 +309,13 @@ function applySelectedSet() {
   scorePerQuestion = questions.length ? Math.max(1, Math.round(100 / questions.length)) : 0;
   timerEl.textContent = time || 0;
   startBtn.disabled = !questions.length;
+  updateMetaCards({
+    title: set.subject || set.title,
+    grade: set.grade,
+    test: set.test,
+    perQuestion: TIME_PER_QUESTION,
+    penalty: WRONG_ANSWER_PENALTY,
+  });
   const analysis = activeSet.analysis || {
     total: activeSet.questions.length,
     missingOptions: 0,
@@ -338,7 +372,7 @@ function quizStart() {
   questionSetSelect.disabled = true;
   isQuizActive = true;
   timerId = setInterval(clockTick, 1000);
-  let landingScreenEl = document.getElementById("start-screen");
+  const landingScreenEl = document.getElementById("start-screen");
   landingScreenEl.setAttribute("class", "hide");
   questionsEl.removeAttribute("class");
   updateProgressLabel();
@@ -348,17 +382,17 @@ function quizStart() {
 
 // Loop through array of questions and create list with buttons
 function getQuestion() {
-  let currentQuestion = questions[currentQuestionIndex];
-  let promptEl = document.getElementById("question-words");
+  const currentQuestion = questions[currentQuestionIndex];
+  const promptEl = document.getElementById("question-words");
   promptEl.textContent = currentQuestion.prompt;
   choicesEl.innerHTML = "";
   (currentQuestion.options || ["Jogap berilmedi"]).forEach(function (
     choice,
     i
   ) {
-    let choiceBtn = document.createElement("button");
+    const choiceBtn = document.createElement("button");
     choiceBtn.setAttribute("value", choice);
-    choiceBtn.textContent = i + 1 + ". " + choice;
+    choiceBtn.textContent = `${i + 1}. ${choice}`;
     choiceBtn.onclick = questionClick;
     choicesEl.appendChild(choiceBtn);
   });
@@ -382,7 +416,7 @@ function questionClick() {
       time = 0;
     }
     timerEl.textContent = time;
-    showFeedback("Nädogry! Dogry jogap:  " + answer, "error");
+    showFeedback(`Nädogry! Dogry jogap: ${answer}`, "error");
   } else {
     correctCount += 1;
     score += scorePerQuestion;
@@ -398,7 +432,12 @@ function questionClick() {
 
 // Render feedback with visual status classes
 function showFeedback(message, status) {
-  feedbackEl.textContent = message;
+  const icons = {
+    success: "✓",
+    error: "✕",
+    neutral: "ℹ",
+  };
+  feedbackEl.textContent = `${icons[status] || ""} ${message}`.trim();
   feedbackEl.className = "feedback";
   if (status === "success") {
     feedbackEl.classList.add("success");
@@ -415,9 +454,11 @@ function quizEnd() {
   if (!isQuizActive) return;
   isQuizActive = false;
   clearInterval(timerId);
-  let endScreenEl = document.getElementById("quiz-end");
+  const landingScreenEl = document.getElementById("start-screen");
+  landingScreenEl.className = "landing";
+  const endScreenEl = document.getElementById("quiz-end");
   endScreenEl.removeAttribute("class");
-  let finalScoreEl = document.getElementById("score-final");
+  const finalScoreEl = document.getElementById("score-final");
   const totalQuestions = questions.length || 1;
   const percentScore = Math.round((correctCount / totalQuestions) * 100);
   const cappedScore = Math.min(score, scorePerQuestion * totalQuestions);
@@ -443,7 +484,7 @@ function clockTick() {
 
 // Save scores alongside a name in localStorage
 function saveHighscore() {
-  let name = nameEl.value.trim();
+  const name = nameEl.value.trim();
   if (name.length < MIN_NAME_LENGTH) {
     alert("Adyňyz 2 harpdan gysga bolmaly däl.");
     return;
@@ -456,8 +497,8 @@ function saveHighscore() {
     return;
   }
 
-  let highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
-  let newScore = {
+  const highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
+  const newScore = {
     score: score,
     correct: correctCount,
     total: questions.length,
@@ -474,17 +515,20 @@ function saveHighscore() {
 function updateProgressLabel(isFinished = false) {
   if (!questions.length) {
     questionProgressEl.textContent = "Synag toplumy saýlanmady.";
+    chipIndexEl.textContent = "0/0";
     return;
   }
 
   if (isFinished) {
     questionProgressEl.textContent = "Netije taýýar!";
+    chipIndexEl.textContent = `${questions.length}/${questions.length}`;
     return;
   }
 
   const total = questions.length;
   const current = Math.min(currentQuestionIndex + 1, total);
   questionProgressEl.textContent = `Sorag ${current}/${total}`;
+  chipIndexEl.textContent = `${current}/${total}`;
 }
 
 function syncProgressBar(forceComplete = false) {

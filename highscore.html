@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tk-TM">
+<html lang="tk">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,15 +9,27 @@
   </head>
 
   <body>
-    <div class="scores">
-      <h1>Synagdan geçenleriň sanawy we ballary</h1>
-      <p id="scores-subtitle">Ýatda saklanan maglumatlar şu ýerde görkezilýär.</p>
-      <ol id="highscores" aria-live="polite"></ol>
-      <div class="score-actions">
-        <form action="index.html">
-          <button type="submit">Täzeden başla</button>
-        </form>
-        <button id="clear" type="button" class="ghost-button">Sanawy arassala</button>
+    <div class="app-shell">
+      <div class="background-ornaments" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+      </div>
+
+      <div class="scores">
+        <div class="score-header">
+          <div>
+            <p class="eyebrow">Ýatda saklanan netije</p>
+            <h1>Synagdan geçenleriň sanawy we ballary</h1>
+            <p id="scores-subtitle">Ýatda saklanan maglumatlar şu ýerde görkezilýär.</p>
+          </div>
+          <form action="index.html">
+            <button type="submit">Täzeden başla</button>
+          </form>
+        </div>
+        <ol id="highscores" aria-live="polite"></ol>
+        <div class="score-actions">
+          <button id="clear" type="button" class="ghost-button">Sanawy arassala</button>
+        </div>
       </div>
     </div>
   </body>
