@@ -7,6 +7,12 @@ const rawTextEl = document.getElementById('raw-text');
 const teacherBtn = document.getElementById('teacher-toggle');
 const submitBtn = document.getElementById('submit-btn');
 const resetBtn = document.getElementById('reset-btn');
+const modeLabel = document.getElementById('mode-label');
+const coveragePill = document.getElementById('coverage-pill');
+const questionCount = document.getElementById('question-count');
+const statTests = document.getElementById('stat-tests');
+const statQuestions = document.getElementById('stat-questions');
+const statGrades = document.getElementById('stat-grades');
 
 let data = { tests: [] };
 let activeTest = null;
@@ -21,6 +27,7 @@ function loadState() {
   answerKeys = storedKeys ? JSON.parse(storedKeys) : {};
   teacherMode = localStorage.getItem('teacherMode') === 'true';
   teacherBtn.classList.toggle('active', teacherMode);
+  modeLabel.textContent = teacherMode ? 'Mugallym tertibi' : 'Okuwçy tertibi';
 }
 
 function saveState() {
@@ -32,7 +39,17 @@ function saveState() {
 async function loadData() {
   const res = await fetch('data/tests.json');
   data = await res.json();
+  updateStats();
   populateFilters();
+}
+
+function updateStats() {
+  const allGrades = data.tests.map(t => t.grade).filter(g => g !== null && g !== undefined);
+  const gradeCount = new Set(allGrades).size || '—';
+  const questionTotal = data.tests.reduce((acc, test) => acc + (test.questions?.length || 0), 0) || '—';
+  statTests.textContent = data.tests.length || '—';
+  statQuestions.textContent = questionTotal;
+  statGrades.textContent = gradeCount;
 }
 
 function populateFilters() {
@@ -41,6 +58,8 @@ function populateFilters() {
   if (grades.length) {
     gradeSelect.value = grades[0];
     populateTests();
+  } else {
+    gradeSelect.innerHTML = '<option disabled>Synp tapylmady</option>';
   }
 }
 
@@ -52,7 +71,9 @@ function populateTests() {
     setActiveTest(tests[0].id);
   } else {
     activeTest = null;
-    questionsEl.innerHTML = '<p>Bu synp boýunça test tapylmady.</p>';
+    questionsEl.innerHTML = '<p class="muted">Bu synp boýunça test tapylmady.</p>';
+    metaEl.innerHTML = '';
+    questionCount.textContent = '0 sorag';
   }
 }
 
@@ -67,16 +88,20 @@ function setActiveTest(id) {
 }
 
 function renderTest() {
+  const sections = activeTest.sections.length ? activeTest.sections.join(', ') : 'Bölüm ýok';
   metaEl.innerHTML = `
-    <div class="badge">Faýl: ${activeTest.file}</div>
-    ${activeTest.variant ? `<div class="badge">Wariant: ${activeTest.variant}</div>` : ''}
-    ${activeTest.sections.length ? `<div class="badge">Bölümler: ${activeTest.sections.join(', ')}</div>` : ''}
+    <div class="pill subtle">Faýl: ${activeTest.file}</div>
+    ${activeTest.variant ? `<div class="pill subtle">Wariant: ${activeTest.variant}</div>` : ''}
+    <div class="pill subtle">Bölümler: ${sections}</div>
   `;
 
   rawTextEl.textContent = activeTest.rawText.join('\n');
 
   const savedAnswers = answers[activeTest.id] || {};
   const key = answerKeys[activeTest.id] || {};
+  const totalQuestions = activeTest.questions.length;
+  questionCount.textContent = `${totalQuestions} sorag`;
+  updateCoveragePill(key, totalQuestions);
 
   questionsEl.innerHTML = activeTest.questions.map(q => {
     const options = q.options.length ? q.options : ['(Wariant tapylmady)'];
@@ -98,6 +123,17 @@ function renderTest() {
       </article>
     `;
   }).join('');
+}
+
+function updateCoveragePill(key, totalQuestions) {
+  const coverage = Object.keys(key).length;
+  if (!coverage) {
+    coveragePill.textContent = 'Dogry jogaplar bellik edilmedi';
+    coveragePill.classList.add('subtle');
+  } else {
+    coveragePill.textContent = `${coverage}/${totalQuestions} soragyň dogrysy bellendi`;
+    coveragePill.classList.remove('subtle');
+  }
 }
 
 function handleTeacherClick(e) {
@@ -136,7 +172,7 @@ function gradeTest() {
   const coverage = Object.keys(key).length;
   const msg = coverage === 0
     ? 'Dogry jogaplar entek bellik edilmedi. Mugallym tertibinde belleň.'
-    : `${correct} / ${total} dogry jogap (${Math.round((correct / total) * 100)}%)`;
+    : `${correct} / ${total} dogry jogap (${Math.round((correct / total) * 100)}%). Bellik edilen soraglar: ${coverage}`;
   resultsEl.textContent = msg;
 }
 
@@ -152,6 +188,7 @@ function resetAnswers() {
 function toggleTeacherMode() {
   teacherMode = !teacherMode;
   teacherBtn.classList.toggle('active', teacherMode);
+  modeLabel.textContent = teacherMode ? 'Mugallym tertibi' : 'Okuwçy tertibi';
   saveState();
   renderTest();
   resultsEl.textContent = teacherMode ? 'Soraglaryň dogry wariantlaryny belläň.' : '';
