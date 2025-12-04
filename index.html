@@ -170,6 +170,55 @@
 
         <div id="feedback" class="feedback hide" role="status" aria-live="polite"></div>
       </main>
+
+      <section class="install-guide" aria-labelledby="install-guide-title">
+        <div class="install-card">
+          <div>
+            <p class="eyebrow">Oflýn gurmak</p>
+            <h3 id="install-guide-title">Android, Windows we iOS üçin PWA gurnamasy</h3>
+            <p class="helper-text" data-install-helper hidden>
+              Brauzer "Gur" tilkesi çykan badyna ýokardaky düwmeden peýdalanyň ýa-da
+              aşakdaky ädimleri ýerine ýetiriň. Faýllar ýönekeý web manifesti arkaly
+              gowşurylyp, goşmaça binar ýükläp almaga zerurlyk ýok.
+            </p>
+          </div>
+
+          <div class="install-grid">
+            <div class="install-track" aria-label="Android we Windows">
+              <h4>Android we Windows</h4>
+              <ol>
+                <li>Chrome ýa-da Edge-de menýudan <strong>Install app</strong> / "Guruň" saýlaň.</li>
+                <li>Ýokardaky "Goşmaça" düwmesi peýda bolsa şondan ýarylan.</li>
+                <li>
+                  Manifesti göçürip almak isleseňiz: <a href="./manifest.webmanifest" download>manifest.webmanifest</a>
+                  faýlyny alyp, oflýn synag üçin yzarlaýan ulgamda ýerleşdiriň.
+                </li>
+              </ol>
+            </div>
+
+            <div class="install-track" aria-label="iOS">
+              <h4>iOS (Safari)</h4>
+              <ol>
+                <li>Safari menýusyndan <strong>Share</strong> knopkasyna basyň.</li>
+                <li><strong>Add to Home Screen</strong> saýlap, ykjam ekrana goşuň.</li>
+                <li>Ilkinji açyşdan soň aşakdaky "Oflýn faýllary taýýarla" düwmesine basyp, ähli mazmuny keşläň.</li>
+              </ol>
+            </div>
+
+            <div class="install-track install-track--actions" aria-label="Oflýn faýllary taýýarlamak">
+              <h4>Faýllary öňünden taýýarla</h4>
+              <p>
+                Oflýn ulanylyş üçin ähli möhüm sahypalar we ikonlar keşlenýär. Brauzeriň
+                keşini arassalamasaňyz, başga binar faýl ýa-da app düzedilmesi talap edilmeýär.
+              </p>
+              <button class="ghost-button" type="button" data-prime-offline>
+                Oflýn faýllary taýýarla
+              </button>
+              <p class="helper-text" data-offline-status hidden aria-live="polite"></p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script src="./question-bank.js"></script>
