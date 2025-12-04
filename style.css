@@ -10,6 +10,7 @@
   --danger: #ef4444;
   --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.15);
   --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.1);
+  --card-radius: 22px;
 }
 
 * {
@@ -24,6 +25,8 @@ body {
     radial-gradient(circle at 90% 10%, #f1f5f9, transparent 22%),
     linear-gradient(135deg, #f8fafc, #f0f9ff 50%, #eef2ff);
   color: var(--ink);
+  font-size: clamp(15px, 1vw + 12px, 17px);
+  line-height: 1.6;
 }
 
 a {
@@ -36,6 +39,7 @@ h3,
 h4 {
   margin: 0 0 12px;
   font-weight: 800;
+  line-height: 1.2;
 }
 
 p {
@@ -46,8 +50,8 @@ p {
 .app-shell {
   position: relative;
   max-width: 1200px;
-  margin: 32px auto 40px;
-  padding: 0 18px 32px;
+  margin: clamp(12px, 2vw, 32px) auto 40px;
+  padding: 0 clamp(12px, 2.4vw, 24px) 32px;
   overflow: hidden;
 }
 
@@ -76,16 +80,16 @@ p {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 22px;
+  grid-template-columns: 1.1fr minmax(320px, 0.9fr);
+  gap: clamp(14px, 2.2vw, 24px);
   align-items: stretch;
-  margin-bottom: 24px;
+  margin-bottom: clamp(16px, 2vw, 24px);
 }
 
 .hero__text {
   background: var(--card);
-  border-radius: 22px;
-  padding: 26px;
+  border-radius: var(--card-radius);
+  padding: clamp(18px, 2.4vw, 26px);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border);
 }
@@ -100,8 +104,8 @@ p {
 
 .hero__panel .panel {
   background: var(--card);
-  border-radius: 22px;
-  padding: 22px 22px 20px;
+  border-radius: var(--card-radius);
+  padding: clamp(18px, 2.4vw, 24px) clamp(16px, 2vw, 22px) 20px;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border);
   height: 100%;
@@ -163,6 +167,19 @@ p {
   color: #0f172a;
   font-weight: 700;
   border: 1px solid #d8e2ff;
+}
+
+.pill--status {
+  background: #ecfeff;
+  color: #0f172a;
+  border-color: #bae6fd;
+  font-weight: 700;
+}
+
+.pill--status.is-offline {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
 }
 
 .status-panel {
@@ -269,7 +286,7 @@ p {
   background: var(--card);
   border-radius: 18px;
   border: 1px solid var(--border);
-  padding: 18px 18px 20px;
+  padding: clamp(16px, 2vw, 18px) clamp(14px, 2vw, 20px) 20px;
   box-shadow: var(--shadow-md);
 }
 
@@ -319,7 +336,7 @@ p {
 
 .options {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   margin-top: 10px;
 }
@@ -335,6 +352,8 @@ p {
   border-radius: 14px;
   padding: 14px 16px;
   font-weight: 700;
+  width: 100%;
+  word-break: break-word;
 }
 
 .options button:hover {
@@ -488,6 +507,18 @@ li:nth-child(odd) {
   flex-wrap: wrap;
 }
 
+.status-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 6px 0 12px;
+}
+
+.install {
+  border-style: dashed;
+}
+
 @media screen and (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;
@@ -498,6 +529,21 @@ li:nth-child(odd) {
   .info-grid {
     grid-template-columns: 1fr;
   }
+
+  .card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selector-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 @media screen and (max-width: 575px) {
@@ -505,8 +551,7 @@ li:nth-child(odd) {
     grid-template-columns: 1fr;
   }
 
-  .hero__actions {
-    flex-direction: column;
-    align-items: stretch;
+  .meta-row {
+    grid-template-columns: 1fr;
   }
 }
