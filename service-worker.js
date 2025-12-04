@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mekdepubs-cache-v2';
+const CACHE_NAME = 'mekdepubs-cache-v4';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
