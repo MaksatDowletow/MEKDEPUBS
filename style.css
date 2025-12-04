@@ -18,6 +18,10 @@
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -76,6 +80,13 @@ p {
   background: #bbf7d0;
   right: -140px;
   top: 200px;
+}
+
+img,
+picture {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .hero {
@@ -582,9 +593,50 @@ li:nth-child(odd) {
   width: fit-content;
 }
 
+@media screen and (max-width: 1040px) {
+  .hero__text {
+    padding: clamp(16px, 2vw, 22px);
+  }
+
+  .hero__panel .panel {
+    padding: clamp(16px, 2vw, 20px);
+  }
+
+  .panel__header {
+    flex-wrap: wrap;
+  }
+
+  .panel__header .pill {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media screen and (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 820px) {
+  h1 {
+    font-size: clamp(26px, 6vw, 32px);
+  }
+
+  h2 {
+    font-size: clamp(22px, 5vw, 28px);
+  }
+
+  .hero__text .lede {
+    font-size: 1rem;
+  }
+
+  .callouts {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    gap: 12px;
   }
 }
 
@@ -607,6 +659,10 @@ li:nth-child(odd) {
     flex-direction: column;
     align-items: stretch;
   }
+
+  .meta-row {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
 }
 
 @media screen and (max-width: 575px) {
@@ -616,5 +672,57 @@ li:nth-child(odd) {
 
   .meta-row {
     grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .app-shell {
+    margin-inline: clamp(8px, 3vw, 16px);
+    padding-inline: clamp(10px, 3vw, 16px);
+  }
+
+  .hero__actions,
+  .status-row,
+  .score-actions {
+    width: 100%;
+  }
+
+  button,
+  .btn,
+  .ghost-button,
+  #question-set,
+  input[type="text"] {
+    width: 100%;
+  }
+
+  .chip-group {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .card__header,
+  .score-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .install-card,
+  .scores,
+  .hero__text,
+  .panel,
+  .card {
+    padding: 14px 14px 18px;
+  }
+
+  .orb-a,
+  .orb-b {
+    width: 220px;
+    height: 220px;
+    filter: blur(60px);
+  }
+
+  .orb-b {
+    top: 120px;
   }
 }
