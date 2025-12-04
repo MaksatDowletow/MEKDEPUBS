@@ -7,6 +7,10 @@
       name="description"
       content="Bilim synaglaryny ýerine ýetirip, üstünlikleriňi derrew gör!"
     />
+    <meta name="theme-color" content="#1d4ed8" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
     <link rel="stylesheet" href="./style.css" />
     <title>Bilimiňi syna • Onlaýn test platformasy</title>
   </head>
@@ -33,6 +37,10 @@
                 Synagdan geçenler
               </button>
             </form>
+            <button class="ghost-button install" data-install hidden>
+              Goşmaça: oflýn taýdan gur
+            </button>
+            <span class="pill pill--status" data-offline aria-live="polite"></span>
           </div>
           <div class="meta-row" id="meta-row">
             <div class="meta-card">
@@ -166,5 +174,6 @@
 
     <script src="./question-bank.js"></script>
     <script src="./script.js"></script>
+    <script src="./pwa.js"></script>
   </body>
 </html>

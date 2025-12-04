@@ -3,8 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d4ed8" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./highScore.js" defer></script>
+    <script src="./pwa.js" defer></script>
     <title>Synagdan geçenler</title>
   </head>
 
@@ -25,6 +30,12 @@
           <form action="index.html">
             <button type="submit">Täzeden başla</button>
           </form>
+        </div>
+        <div class="status-row">
+          <button class="ghost-button install" data-install hidden>
+            Goşmaça: oflýn görnüşde gur
+          </button>
+          <span class="pill pill--status" data-offline aria-live="polite"></span>
         </div>
         <ol id="highscores" aria-live="polite"></ol>
         <div class="score-actions">
