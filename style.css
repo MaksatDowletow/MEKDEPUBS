@@ -414,6 +414,10 @@ button:disabled {
   font-size: 0.95rem;
 }
 
+.helper-text.error {
+  color: var(--danger);
+}
+
 input[type="text"] {
   font-size: 100%;
   padding: 10px 12px;
@@ -517,6 +521,65 @@ li:nth-child(odd) {
 
 .install {
   border-style: dashed;
+}
+
+.install-guide {
+  margin: 48px auto 60px;
+  max-width: 1200px;
+  padding: 0 14px;
+}
+
+.install-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  padding: 26px;
+}
+
+.install-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.install-track {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.install-track h4 {
+  margin: 0 0 6px;
+}
+
+.install-track p {
+  margin: 0 0 8px;
+}
+
+.install-track ol {
+  max-height: none;
+  margin: 8px 0 0;
+}
+
+.install-track ol li {
+  background: transparent;
+  border: none;
+  padding-left: 0;
+  margin-bottom: 4px;
+}
+
+.install-track--actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.install-track--actions .ghost-button {
+  width: fit-content;
 }
 
 @media screen and (max-width: 960px) {
