@@ -31,9 +31,6 @@ const nameHintEl = document.querySelector("#name-hint");
 const filterInput = document.querySelector("#question-filter");
 const gradeFilter = document.querySelector("#grade-filter");
 const combinedToggle = document.querySelector("#combined-toggle");
-const statTotalTests = document.querySelector("#stat-total-tests");
-const statTotalQuestions = document.querySelector("#stat-total-questions");
-const statAvgTime = document.querySelector("#stat-avg-time");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -164,27 +161,6 @@ function computeTimingConfig(grade, questionCount) {
   const totalTime = Math.max(questionCount * perQuestion, perQuestion);
 
   return { perQuestion, penalty, totalTime };
-}
-
-// Build aggregate insights for the visible question sets
-function updateBankInsights(sets) {
-  const totalTests = Array.isArray(sets) ? sets.length : 0;
-  const totalQuestions = Array.isArray(sets)
-    ? sets.reduce((sum, set) => sum + (set.questions?.length || 0), 0)
-    : 0;
-
-  const averageSeconds = totalTests
-    ? Math.round(
-        sets.reduce(
-          (sum, set) => sum + computeTimingConfig(set.grade, set.questions?.length || 0).perQuestion,
-          0
-        ) / totalTests
-      )
-    : 0;
-
-  statTotalTests.textContent = totalTests;
-  statTotalQuestions.textContent = totalQuestions;
-  statAvgTime.textContent = `${averageSeconds} sek`;
 }
 
 function buildSetDescriptor(set) {
@@ -328,7 +304,6 @@ async function loadQuestionBank() {
 
   populateGradeFilter();
   populateQuestionSelector();
-  updateBankInsights(questionSets);
   questionSetSelect.disabled = false;
   questionSetMeta.textContent = `${questionSets.length} sany UBS/UBT toplumy elýeterli. Birini saýlaň.`;
 }
@@ -411,7 +386,6 @@ function applyFilters() {
   });
 
   populateQuestionSelector();
-  updateBankInsights(filteredQuestionSets);
 
   if (!filteredQuestionSets.includes(activeSet)) {
     questionSetSelect.value = "";

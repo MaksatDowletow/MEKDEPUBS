@@ -137,7 +137,6 @@ p {
 }
 
 .meta-row,
-.insight-grid,
 .callouts,
 .download-grid {
   display: grid;
@@ -150,7 +149,6 @@ p {
 }
 
 .meta-card,
-.insight-card,
 .download-card,
 .status-panel,
 .table-wrapper {
@@ -161,13 +159,11 @@ p {
 }
 
 .meta-card,
-.insight-card,
 .download-card {
   padding: 14px 16px;
 }
 
-.meta-card .label,
-.insight-card .label {
+.meta-card .label {
   color: var(--muted);
   font-weight: 600;
   font-size: 0.95rem;
@@ -177,16 +173,6 @@ p {
 .meta-card .value {
   font-weight: 800;
   font-size: 1.05rem;
-}
-
-.insight-card .helper-text {
-  margin: 6px 0 0;
-}
-
-.insight-value {
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin: 2px 0 4px;
 }
 
 .cta-banner {
