@@ -447,7 +447,7 @@ function quizStart() {
   }
   timerId = setInterval(clockTick, 1000);
   const landingScreenEl = document.getElementById("start-screen");
-  landingScreenEl.setAttribute("class", "hide");
+  landingScreenEl?.classList.add("hide");
   questionsEl.removeAttribute("class");
   updateProgressLabel();
   syncProgressBar();
@@ -592,7 +592,7 @@ function quizEnd() {
   isQuizActive = false;
   clearInterval(timerId);
   const landingScreenEl = document.getElementById("start-screen");
-  landingScreenEl.className = "landing";
+  landingScreenEl?.classList.remove("hide");
   const endScreenEl = document.getElementById("quiz-end");
   endScreenEl.removeAttribute("class");
   const finalScoreEl = document.getElementById("score-final");
