@@ -46,7 +46,7 @@
                   </button>
                 </form>
                 <button class="ghost-button install" data-install hidden>
-                  Goşmaça: oflýn taýdan gur
+                  Programmany gur
                 </button>
               </div>
               <span class="pill pill--status" data-offline aria-live="polite"></span>
@@ -59,6 +59,30 @@
             Sorag toplumy saýla, wagtyňy dolandyr we netijeleri derrew al. Platforma
             matematika we dil sapaklary üçin taýýarlanan görnüşde işlenildi.
           </p>
+
+          <section class="install-banner" aria-label="Programmany gur"> 
+            <div>
+              <p class="eyebrow">PWA taýýar</p>
+              <h3>Programmany gur we oflýn işe taýýarla</h3>
+              <p class="helper-text">
+                Brauzerden çykmazdan öý ekranyna goşuň. Gurmaga taýýarlyk üçin aşakdaky düwmä basyň ýa-da brauzeriň "Install" / "Add to Home Screen" menýusyny ulanyň.
+              </p>
+              <p class="helper-text" data-install-helper hidden>
+                Brauzeriň menýusyndan "Guruň" / "Add to Home Screen" saýlap ýa-da aşakdaky düwmä basyp
+                oflaýn faýllary taýýarlap bilersiňiz.
+              </p>
+            </div>
+            <div class="install-banner__actions">
+              <button class="cta-button install" type="button" data-install>
+                Programmany gur
+              </button>
+              <button class="ghost-button" type="button" data-prime-offline>
+                Oflýn faýllary öňünden ýükle
+              </button>
+              <span class="pill pill--status" data-offline-status hidden aria-live="polite"></span>
+            </div>
+          </section>
+
           <div class="meta-row" id="meta-row">
             <div class="meta-card">
               <span class="label">Synag toplumy</span>
@@ -145,6 +169,44 @@
                 <li><strong>Windows:</strong> Adres setirindäki "Install" nyşanyna basyň ýa-da brauzer menýusyny ulanyň.</li>
               </ul>
             </div>
+
+            <section class="platform-downloads" aria-label="Enjamlara görä ýüklemek">
+              <div class="platform-downloads__header">
+                <div>
+                  <p class="label">Platformalara uýgun</p>
+                  <h3>Mobil we kompýuter üçin göni ýüklemeler</h3>
+                  <p class="helper-text">
+                    PWA-dan peýdalanyşy dowam etdirmek bilen birlikde, aşakdaky bölümlerden Android, iOS we Windows ulgamlarynda aýratyn gurma faýllaryny ýa-da Store linklerini paýlap bilersiňiz.
+                  </p>
+                </div>
+              </div>
+              <div class="download-grid">
+                <a class="download-card" data-platform-download="android" role="button" aria-label="Android üçin ýükle">
+                  <div class="download-card__title">Android üçin ýükle</div>
+                  <p class="download-card__body" data-platform-copy="android">
+                    APK ýa-da Play Store linkiňizi birleşdiriň we gurnama başlamak üçin ulanyjylara gönüden-göni ýol görkeziň.
+                  </p>
+                  <span class="download-badge" data-platform-badge="android">APK ýa-da Play Store</span>
+                </a>
+                <a class="download-card" data-platform-download="ios" role="button" aria-label="iOS üçin ýükle">
+                  <div class="download-card__title">iOS üçin ýükle</div>
+                  <p class="download-card__body" data-platform-copy="ios">
+                    App Store ýa-da enterprise profil linkiňizi goşup, Safari arkaly gönüden-göni gurma mümkinçilik beriň.
+                  </p>
+                  <span class="download-badge" data-platform-badge="ios">App Store ýa-da profil</span>
+                </a>
+                <a class="download-card" data-platform-download="windows" role="button" aria-label="Windows üçin ýükle">
+                  <div class="download-card__title">Windows üçin ýükle</div>
+                  <p class="download-card__body" data-platform-copy="windows">
+                    MSIX/EXE ýa-da Microsoft Store linkiňizi birleşdirip, iş stansiýalary üçin offlaýn gurma üpjün ediň.
+                  </p>
+                  <span class="download-badge" data-platform-badge="windows">MSIX ýa-da Store</span>
+                </a>
+              </div>
+              <p class="helper-text download-footnote">
+                Linkleri <code>distribution-config.js</code> faýlynda sazlaň. URL girizilmedik bolsa kart "Ýakynda elýeter" görnüşinde görkeziler.
+              </p>
+            </section>
 
             <div class="status-panel" aria-label="Synag ýagdaýy">
               <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
@@ -238,6 +300,7 @@
 
     <script src="./question-bank.js"></script>
     <script src="./script.js"></script>
+    <script src="./distribution-config.js"></script>
     <script src="./pwa.js"></script>
   </body>
 </html>
