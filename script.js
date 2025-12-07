@@ -2,6 +2,7 @@
 
 let questions = [];
 let questionSets = [];
+let filteredQuestionSets = [];
 let activeSet = null;
 
 // Get DOM Elements
@@ -27,6 +28,12 @@ const reviewBody = document.querySelector("#review-body");
 const reviewSummary = document.querySelector("#review-summary");
 const scoreDetailEl = document.querySelector("#score-detail");
 const nameHintEl = document.querySelector("#name-hint");
+const filterInput = document.querySelector("#question-filter");
+const gradeFilter = document.querySelector("#grade-filter");
+const combinedToggle = document.querySelector("#combined-toggle");
+const statTotalTests = document.querySelector("#stat-total-tests");
+const statTotalQuestions = document.querySelector("#stat-total-questions");
+const statAvgTime = document.querySelector("#stat-avg-time");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -159,6 +166,27 @@ function computeTimingConfig(grade, questionCount) {
   return { perQuestion, penalty, totalTime };
 }
 
+// Build aggregate insights for the visible question sets
+function updateBankInsights(sets) {
+  const totalTests = Array.isArray(sets) ? sets.length : 0;
+  const totalQuestions = Array.isArray(sets)
+    ? sets.reduce((sum, set) => sum + (set.questions?.length || 0), 0)
+    : 0;
+
+  const averageSeconds = totalTests
+    ? Math.round(
+        sets.reduce(
+          (sum, set) => sum + computeTimingConfig(set.grade, set.questions?.length || 0).perQuestion,
+          0
+        ) / totalTests
+      )
+    : 0;
+
+  statTotalTests.textContent = totalTests;
+  statTotalQuestions.textContent = totalQuestions;
+  statAvgTime.textContent = `${averageSeconds} sek`;
+}
+
 function buildSetDescriptor(set) {
   if (!set) return "Toplum";
   const parts = [];
@@ -288,6 +316,7 @@ async function loadQuestionBank() {
   const comprehensiveSets = buildComprehensiveGradeSets(normalizedSets);
 
   questionSets = sortQuestionSets([...normalizedSets, ...comprehensiveSets]);
+  filteredQuestionSets = questionSets;
 
   if (!questionSets.length) {
     questionSetSelect.innerHTML = "<option>Sorag tapylmady</option>";
@@ -297,12 +326,15 @@ async function loadQuestionBank() {
     return;
   }
 
+  populateGradeFilter();
   populateQuestionSelector();
+  updateBankInsights(questionSets);
   questionSetSelect.disabled = false;
   questionSetMeta.textContent = `${questionSets.length} sany UBS/UBT toplumy elýeterli. Birini saýlaň.`;
 }
 
 function populateQuestionSelector() {
+  const sets = filteredQuestionSets.length ? filteredQuestionSets : questionSets;
   questionSetSelect.innerHTML = "";
 
   const placeholderOption = document.createElement("option");
@@ -312,20 +344,79 @@ function populateQuestionSelector() {
   placeholderOption.selected = true;
   questionSetSelect.appendChild(placeholderOption);
 
-  questionSets.forEach((set, index) => {
+  sets.forEach((set) => {
     const option = document.createElement("option");
     const labelParts = [];
     if (set.grade) labelParts.push(`${set.grade} synp`);
     if (set.test) labelParts.push(`Test ${set.test}`);
     if (set.subject) labelParts.push(set.subject);
     const totalQuestions = set.questions?.length || 0;
-    option.value = index;
+    option.value = questionSets.indexOf(set);
     option.textContent = labelParts.length
       ? `${set.prefix || "Toplum"} – ${labelParts.join(" • ")}`
       : set.title;
     option.textContent = `${option.textContent} • ${totalQuestions} sorag`;
     questionSetSelect.appendChild(option);
   });
+}
+
+// Build grade dropdown options dynamically from the available sets
+function populateGradeFilter() {
+  if (!gradeFilter) return;
+
+  const uniqueGrades = Array.from(
+    new Set(questionSets.map((set) => (set.grade ? set.grade.toString() : "")))
+  )
+    .filter(Boolean)
+    .sort((a, b) => Number(a) - Number(b));
+
+  gradeFilter.innerHTML = "";
+  const anyOption = document.createElement("option");
+  anyOption.value = "";
+  anyOption.textContent = "Hemmesi";
+  gradeFilter.appendChild(anyOption);
+
+  uniqueGrades.forEach((grade) => {
+    const option = document.createElement("option");
+    option.value = grade;
+    option.textContent = `${grade} synp`;
+    gradeFilter.appendChild(option);
+  });
+}
+
+// Apply search, grade and combined filters to visible sets
+function applyFilters() {
+  const query = (filterInput?.value || "").trim().toLowerCase();
+  const grade = gradeFilter?.value || "";
+  const allowCombined = combinedToggle ? combinedToggle.checked : true;
+
+  filteredQuestionSets = questionSets.filter((set) => {
+    if (!allowCombined && set.combined) return false;
+    if (grade && set.grade?.toString() !== grade) return false;
+
+    if (!query) return true;
+
+    const haystack = [
+      set.subject,
+      set.title,
+      set.prefix,
+      set.test?.toString(),
+      set.grade?.toString(),
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return haystack.includes(query);
+  });
+
+  populateQuestionSelector();
+  updateBankInsights(filteredQuestionSets);
+
+  if (!filteredQuestionSets.includes(activeSet)) {
+    questionSetSelect.value = "";
+    applySelectedSet();
+  }
 }
 
 function applySelectedSet() {
@@ -698,6 +789,18 @@ submitBtn.onclick = saveHighscore;
 startBtn.onclick = quizStart;
 
 questionSetSelect.onchange = applySelectedSet;
+
+if (filterInput) {
+  filterInput.addEventListener("input", applyFilters);
+}
+
+if (gradeFilter) {
+  gradeFilter.addEventListener("change", applyFilters);
+}
+
+if (combinedToggle) {
+  combinedToggle.addEventListener("change", applyFilters);
+}
 
 validateName();
 loadQuestionBank();

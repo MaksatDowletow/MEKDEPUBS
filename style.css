@@ -248,6 +248,27 @@ picture {
   font-size: 1.05rem;
 }
 
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 12px 0 16px;
+}
+
+.insight-card {
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  box-shadow: var(--shadow-md);
+}
+
+.insight-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 2px 0 6px;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -337,6 +358,42 @@ picture {
   min-width: 240px;
   font-weight: 600;
   background: var(--surface);
+}
+
+#question-filter,
+#grade-filter {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+  background: var(--surface);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+  align-items: end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: #f8fafc;
+  font-weight: 700;
+  color: var(--muted);
 }
 
 .selector-meta {
