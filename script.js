@@ -25,6 +25,8 @@ const chipSubjectEl = document.querySelector("#chip-subject");
 const reviewSection = document.querySelector("#answer-review");
 const reviewBody = document.querySelector("#review-body");
 const reviewSummary = document.querySelector("#review-summary");
+const scoreDetailEl = document.querySelector("#score-detail");
+const nameHintEl = document.querySelector("#name-hint");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -155,6 +157,47 @@ function computeTimingConfig(grade, questionCount) {
   const totalTime = Math.max(questionCount * perQuestion, perQuestion);
 
   return { perQuestion, penalty, totalTime };
+}
+
+function buildSetDescriptor(set) {
+  if (!set) return "Toplum";
+  const parts = [];
+  if (set.grade) parts.push(`${set.grade} synp`);
+  if (set.test) parts.push(`Test ${set.test}`);
+  const suffix = parts.length ? ` (${parts.join(" • ")})` : "";
+  return `${set.subject || set.title || "Toplum"}${suffix}`;
+}
+
+function validateName() {
+  if (!nameEl || !submitBtn) return false;
+
+  const rawName = nameEl.value || "";
+  const name = rawName.trim();
+  const maxLength = nameEl.maxLength > 0 ? nameEl.maxLength : Infinity;
+  const errors = [];
+
+  if (!name) {
+    errors.push("Adyňyzy giriziň.");
+  }
+  if (name.length > maxLength) {
+    errors.push(`Ad ${maxLength} harpdan geçmeli däl.`);
+  }
+  if (name.length > 0 && name.length < MIN_NAME_LENGTH) {
+    errors.push(`Iň az ${MIN_NAME_LENGTH} harp giriziň.`);
+  }
+
+  const isValid = errors.length === 0;
+
+  if (nameHintEl) {
+    nameHintEl.textContent = isValid
+      ? "Adyňyz 2–20 harp arasynda bolmalydyr."
+      : errors.join(" ");
+    nameHintEl.classList.toggle("input-hint--error", !isValid);
+    nameHintEl.classList.toggle("input-hint--success", false);
+  }
+
+  submitBtn.disabled = !isValid;
+  return isValid;
 }
 
 function buildComprehensiveGradeSets(sets) {
@@ -387,6 +430,14 @@ function quizStart() {
   correctCount = 0;
   scorePerQuestion = questions.length ? Math.max(1, Math.round(100 / questions.length)) : 0;
   wrongAnswers = [];
+  if (nameEl) {
+    nameEl.value = "";
+  }
+  if (nameHintEl) {
+    nameHintEl.textContent = "Adyňyz 2–20 harp arasynda bolmalydyr.";
+    nameHintEl.classList.remove("input-hint--error", "input-hint--success");
+  }
+  submitBtn.disabled = true;
   timerEl.textContent = time;
   startBtn.disabled = true;
   questionSetSelect.disabled = true;
@@ -503,6 +554,19 @@ function renderAnswerReview() {
   reviewSection.classList.remove("hide");
 }
 
+function renderScoreDetail() {
+  if (!scoreDetailEl) return;
+
+  if (!questions.length) {
+    scoreDetailEl.textContent = "";
+    return;
+  }
+
+  const setDescriptor = buildSetDescriptor(activeSet);
+  const total = questions.length;
+  scoreDetailEl.textContent = `${setDescriptor} • Dogry: ${correctCount}/${total} • Galan wagt: ${time} sek • Her soraga: ${TIME_PER_QUESTION} sek • Jerime: -${WRONG_ANSWER_PENALTY} sek.`;
+}
+
 // Render feedback with visual status classes
 function showFeedback(message, status) {
   const icons = {
@@ -543,6 +607,7 @@ function quizEnd() {
   questionSetSelect.disabled = false;
   updateProgressLabel(true);
   syncProgressBar(true);
+  renderScoreDetail();
   renderAnswerReview();
 }
 
@@ -558,18 +623,10 @@ function clockTick() {
 
 // Save scores alongside a name in localStorage
 function saveHighscore() {
-  const name = nameEl.value.trim();
-  if (name.length < MIN_NAME_LENGTH) {
-    alert("Adyňyz 2 harpdan gysga bolmaly däl.");
-    return;
-  }
+  const isValidName = validateName();
+  if (!isValidName) return;
 
-  if (name.length > nameEl.maxLength) {
-    alert(
-      "Adyňyz gysga bolmaly. Uzaklygy: " + nameEl.maxLength + " harpdan köp bolmasyn."
-    );
-    return;
-  }
+  const name = nameEl.value.trim();
 
   const highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
   const newScore = {
@@ -578,11 +635,20 @@ function saveHighscore() {
     total: questions.length,
     timeLeft: time,
     setTitle: activeSet?.title || "Belli däl",
+    grade: activeSet?.grade || "",
+    test: activeSet?.test || "",
+    subject: activeSet?.subject || "",
     name: name,
+    savedAt: new Date().toISOString(),
   };
   highscores.push(newScore);
   window.localStorage.setItem("highscores", JSON.stringify(highscores));
-  alert(name + " Siziň balyňyz ýatda saklandy");
+  if (nameHintEl) {
+    nameHintEl.textContent = `${name} atly ulanyjy üstünlikli goşuldy.`;
+    nameHintEl.classList.remove("input-hint--error");
+    nameHintEl.classList.add("input-hint--success");
+  }
+  showFeedback("Netije ýatda saklandy.", "success");
 }
 
 // Update status bar label and progress indicator
@@ -623,6 +689,7 @@ function checkForEnter(event) {
   }
 }
 nameEl.onkeyup = checkForEnter;
+nameEl.addEventListener("input", validateName);
 
 // Save users' score after clicking submit
 submitBtn.onclick = saveHighscore;
@@ -632,4 +699,5 @@ startBtn.onclick = quizStart;
 
 questionSetSelect.onchange = applySelectedSet;
 
+validateName();
 loadQuestionBank();
