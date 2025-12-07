@@ -633,6 +633,64 @@ input[type="text"] {
   color: var(--danger);
 }
 
+.review-card {
+  margin-top: 16px;
+}
+
+.chip-info {
+  background: #eef2ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.table-wrapper {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 320px;
+}
+
+.review-table th,
+.review-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.review-table th {
+  background: #f8fafc;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.review-table tr:last-child td {
+  border-bottom: none;
+}
+
+.review-empty {
+  text-align: center;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.answer-correct {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.answer-wrong {
+  color: var(--danger);
+  font-weight: 700;
+}
+
 /* Scoreboard */
 .scores {
   margin: 32px auto 0;

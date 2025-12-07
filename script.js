@@ -22,6 +22,9 @@ const metaTimeEl = document.querySelector("#meta-time");
 const metaPenaltyEl = document.querySelector("#meta-penalty");
 const chipIndexEl = document.querySelector("#chip-index");
 const chipSubjectEl = document.querySelector("#chip-subject");
+const reviewSection = document.querySelector("#answer-review");
+const reviewBody = document.querySelector("#review-body");
+const reviewSummary = document.querySelector("#review-summary");
 
 // Quiz state
 let currentQuestionIndex = 0;
@@ -34,6 +37,7 @@ let scorePerQuestion = 0;
 let time = questions.length * TIME_PER_QUESTION;
 let timerId;
 let isQuizActive = false;
+let wrongAnswers = [];
 
 // Utility
 function formatGradeTest(grade, test) {
@@ -382,10 +386,14 @@ function quizStart() {
   score = 0;
   correctCount = 0;
   scorePerQuestion = questions.length ? Math.max(1, Math.round(100 / questions.length)) : 0;
+  wrongAnswers = [];
   timerEl.textContent = time;
   startBtn.disabled = true;
   questionSetSelect.disabled = true;
   isQuizActive = true;
+  if (reviewSection) {
+    reviewSection.classList.add("hide");
+  }
   timerId = setInterval(clockTick, 1000);
   const landingScreenEl = document.getElementById("start-screen");
   landingScreenEl.setAttribute("class", "hide");
@@ -421,7 +429,8 @@ function questionClick() {
 
   const answer = questions[currentQuestionIndex].answer;
   const hasAnswer = Boolean(answer);
-  const isCorrect = hasAnswer && this.value === answer;
+  const selectedAnswer = this.value;
+  const isCorrect = hasAnswer && selectedAnswer === answer;
 
   if (!hasAnswer) {
     showFeedback("Jogaplar maglumat üçin berilýär.", "neutral");
@@ -432,6 +441,12 @@ function questionClick() {
     }
     timerEl.textContent = time;
     showFeedback(`Nädogry! Dogry jogap: ${answer}`, "error");
+    wrongAnswers.push({
+      index: currentQuestionIndex + 1,
+      prompt: questions[currentQuestionIndex].prompt,
+      correct: answer,
+      selected: selectedAnswer,
+    });
   } else {
     correctCount += 1;
     score += scorePerQuestion;
@@ -443,6 +458,49 @@ function questionClick() {
   } else {
     getQuestion();
   }
+}
+
+function renderAnswerReview() {
+  if (!reviewSection || !reviewBody || !reviewSummary) return;
+
+  reviewBody.innerHTML = "";
+
+  if (!questions.length) {
+    reviewSection.classList.add("hide");
+    return;
+  }
+
+  if (!wrongAnswers.length) {
+    reviewSummary.textContent = "Ähli soraglara dogry jogap berdiňiz.";
+    const emptyRow = document.createElement("tr");
+    emptyRow.innerHTML =
+      '<td colspan="4" class="review-empty">Nädogry jogap ýok — ajaýyp üstünlik!</td>';
+    reviewBody.appendChild(emptyRow);
+  } else {
+    reviewSummary.textContent = `Nädogry jogaplaryň dogry görnüşi (${wrongAnswers.length} sany).`;
+
+    wrongAnswers.forEach((item) => {
+      const row = document.createElement("tr");
+      const questionCell = document.createElement("td");
+      questionCell.textContent = item.index;
+
+      const promptCell = document.createElement("td");
+      promptCell.textContent = item.prompt || "Sorag berilmedi";
+
+      const correctCell = document.createElement("td");
+      correctCell.textContent = item.correct || "-";
+      correctCell.classList.add("answer-correct");
+
+      const selectedCell = document.createElement("td");
+      selectedCell.textContent = item.selected || "-";
+      selectedCell.classList.add("answer-wrong");
+
+      row.append(questionCell, promptCell, correctCell, selectedCell);
+      reviewBody.appendChild(row);
+    });
+  }
+
+  reviewSection.classList.remove("hide");
 }
 
 // Render feedback with visual status classes
@@ -485,6 +543,7 @@ function quizEnd() {
   questionSetSelect.disabled = false;
   updateProgressLabel(true);
   syncProgressBar(true);
+  renderAnswerReview();
 }
 
 // Stop when timer hits 0
