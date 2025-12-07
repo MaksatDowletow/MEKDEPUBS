@@ -1,12 +1,19 @@
 {
   "name": "Bilimiňi syna",
   "short_name": "Synaglar",
+  "id": "/",
   "start_url": "./index.html?source=pwa",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait",
   "background_color": "#f8fafc",
   "theme_color": "#1d4ed8",
   "description": "Bilimiňi syna - 4-nji synp we ýokary synplar üçin synag platformasy.",
+  "dir": "ltr",
+  "lang": "tk",
+  "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "./icons/icon-192.svg",
