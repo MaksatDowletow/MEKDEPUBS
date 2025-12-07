@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mekdepubs-cache-v6';
+const CACHE_NAME = 'mekdepubs-cache-v7';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const OFFLINE_ASSETS = [
   './style.css',
   './script.js',
   './highScore.js',
+  './distribution-config.js',
   './pwa.js',
   './question-bank.js',
   './question-bank.json',
