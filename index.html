@@ -23,81 +23,47 @@
 
   <body>
     <div class="app-shell">
-      <div class="background-ornaments" aria-hidden="true">
-        <span class="orb orb-a"></span>
-        <span class="orb orb-b"></span>
-      </div>
-
       <header id="start-screen" class="hero">
         <div class="hero__text">
-          <div class="cta-banner" aria-label="Synaga giriş">
-            <div>
-              <p class="eyebrow">Başlamak üçin taýýarlan</p>
-              <h2>Testi derrew başlaň</h2>
-              <p class="helper-text">
-                Ilki bilen degişli synag toplumy saýlaň, soň "Synaga başla" düwmesine basyň.
-              </p>
+          <div class="topbar">
+            <div class="brand">
+              <div class="dot"></div>
+              <span>Bilimiňi syna</span>
             </div>
-            <div class="cta-banner__actions">
-                <div class="cta-banner__secondary">
-                <form action="./highscore.html">
-                  <button class="ghost-button" id="view-high-scores" type="submit">
-                    Synagdan geçenler
-                  </button>
-                </form>
-                <button class="ghost-button install" data-install hidden>
-                  Programmany gur
+            <div class="topbar__actions">
+              <form action="./highscore.html">
+                <button class="ghost-button" id="view-high-scores" type="submit">
+                  Netijeler
                 </button>
-              </div>
+              </form>
+              <button class="ghost-button install" data-install hidden>
+                Programmany gur
+              </button>
               <span class="pill pill--status" data-offline aria-live="polite"></span>
             </div>
           </div>
 
-          <p class="eyebrow">Interaktiw okuw platformasy</p>
-          <h1>Bilimiňi syna!</h1>
+          <p class="eyebrow">Interaktiw okuw synagy</p>
+          <h1>Sorag toplumy saýlap işe başla</h1>
           <p class="lede">
-            Sorag toplumy saýla, wagtyňy dolandyr we netijeleri derrew al. Platforma
-            matematika we dil sapaklary üçin taýýarlanan görnüşde işlenildi.
+            Minimalistik panel arkaly toplumy saýla, wagty dolandyr we üstünlikleriňi şol bada gör. Umumy statistikalar aşakdaky sanawda gysgajyk görnüşde görkezilýär.
           </p>
-
-          <section class="install-banner" aria-label="Programmany gur"> 
-            <div>
-              <p class="eyebrow">PWA taýýar</p>
-              <h3>Programmany gur we oflýn işe taýýarla</h3>
-              <p class="helper-text">
-                Brauzerden çykmazdan öý ekranyna goşuň. Gurmaga taýýarlyk üçin aşakdaky düwmä basyň ýa-da brauzeriň "Install" / "Add to Home Screen" menýusyny ulanyň.
-              </p>
-              <p class="helper-text" data-install-helper hidden>
-                Brauzeriň menýusyndan "Guruň" / "Add to Home Screen" saýlap ýa-da aşakdaky düwmä basyp
-                oflaýn faýllary taýýarlap bilersiňiz.
-              </p>
-            </div>
-            <div class="install-banner__actions">
-              <button class="cta-button install" type="button" data-install>
-                Programmany gur
-              </button>
-              <button class="ghost-button" type="button" data-prime-offline>
-                Oflýn faýllary öňünden ýükle
-              </button>
-              <span class="pill pill--status" data-offline-status hidden aria-live="polite"></span>
-            </div>
-          </section>
 
           <div class="meta-row" id="meta-row">
             <div class="meta-card">
-              <span class="label">Synag toplumy</span>
+              <span class="label">Toplum</span>
               <div class="value" id="meta-title">Saýlanmady</div>
             </div>
             <div class="meta-card">
-              <span class="label">Synp • Test</span>
+              <span class="label">Synp/Test</span>
               <div class="value" id="meta-grade">-</div>
             </div>
             <div class="meta-card">
-              <span class="label">Her soraga wagt</span>
+              <span class="label">Wagt</span>
               <div class="value" id="meta-time">0 sek</div>
             </div>
             <div class="meta-card">
-              <span class="label">Nädogry üçin jerime</span>
+              <span class="label">Jerime</span>
               <div class="value" id="meta-penalty">0 sek</div>
             </div>
           </div>
@@ -106,17 +72,17 @@
             <div class="insight-card">
               <p class="label">Toplum sany</p>
               <div class="insight-value" id="stat-total-tests">0</div>
-              <p class="helper-text">UBS/UBT toplumy, bitewi synaglar bilen birlikde.</p>
+              <p class="helper-text">UBS/UBT bloklary.</p>
             </div>
             <div class="insight-card">
-              <p class="label">Soraglaryň jemi</p>
+              <p class="label">Soraglar</p>
               <div class="insight-value" id="stat-total-questions">0</div>
-              <p class="helper-text">Subýektleriň arasynda elýeterli soraglaryň sany.</p>
+              <p class="helper-text">Umumy degişli soraglar.</p>
             </div>
             <div class="insight-card">
               <p class="label">Orta wagt</p>
               <div class="insight-value" id="stat-avg-time">0 sek</div>
-              <p class="helper-text">Her soraga üpjün edilýän takmynan wagty görkezýär.</p>
+              <p class="helper-text">Her soraga berilýän möçber.</p>
             </div>
           </section>
         </div>
@@ -146,7 +112,7 @@
                 <input
                   id="question-filter"
                   type="search"
-                  placeholder="Mysal: algebra, 7 synp ýa-da Test B"
+                  placeholder="Algebra ýa-da 7 synp"
                   aria-label="Sorag toplumy boýunça gözlegi ýaz"
                 />
               </div>
@@ -164,10 +130,10 @@
 
             <div class="start-cta" aria-label="Synaga giriş">
               <div>
-                <p class="label">Ulgam taýýarlanyp dur</p>
+                <p class="label">Taýýar</p>
                 <h3>Synaga başlamak üçin basyň</h3>
                 <p class="helper-text">
-                  Toplumy saýlan badyňyza bu uly düwme arkaly synagy bada-bat başlap bilersiňiz.
+                  Toplumy saýlan badyňyzdan soň wagt we jerime boýunça maglumat ýokarda täzelenýär.
                 </p>
               </div>
               <button id="start" class="cta-button start-button" disabled>
@@ -175,78 +141,14 @@
               </button>
             </div>
 
-            <div class="callouts">
-              <div class="callout">
-                <strong>Wagtyňyz çäklidir.</strong> Sorag sanyna we synp derejäňe görä 30–75
-                sekunt aralygynda wagt bellenýär. Nädogry jogap şol soragyň wagtynyň takmynan
-                25%-i möçberinde aýrylar.
-              </div>
-              <div class="callout">
-                <strong>Üns beriň.</strong> Depderçe ulanyň, jogaplary diňläň we her saýlawy
-                ünsli barlaň.
-              </div>
-              <div class="callout">
-                <strong>Oflaýn işläp bilýär.</strong> Aşakdaky giňeltme arkaly faýllary öňünden ýükläp,
-                Android, iOS we Windows enjamlarynda öý ekranyna goşup ulanyp bilersiňiz.
-              </div>
-            </div>
-
             <div class="panel__footer">
-              <p class="label">PWA taýýarlygy</p>
-              <p class="helper-text" data-install-helper hidden>
-                Brauzeriň menýusyndan "Guruň" / "Add to Home Screen" saýlap ýa-da aşakdaky düwmä basyp
-                oflaýn faýllary taýýarlap bilersiňiz.
-              </p>
               <div class="status-row">
                 <button class="ghost-button" type="button" data-prime-offline>
-                  Oflýn faýllary öňünden ýükle
+                  Oflýn faýllary taýýarla
                 </button>
                 <span class="pill pill--status" data-offline-status hidden aria-live="polite"></span>
               </div>
-              <ul class="helper-text">
-                <li><strong>Android:</strong> Üstki sag burçdaky menýudan "Ekraňa goş" saýlaň.</li>
-                <li><strong>iOS (Safari):</strong> Paýlaş menýusyndan "Add to Home Screen" saýlaň.</li>
-                <li><strong>Windows:</strong> Adres setirindäki "Install" nyşanyna basyň ýa-da brauzer menýusyny ulanyň.</li>
-              </ul>
             </div>
-
-            <section class="platform-downloads" aria-label="Enjamlara görä ýüklemek">
-              <div class="platform-downloads__header">
-                <div>
-                  <p class="label">Platformalara uýgun</p>
-                  <h3>Mobil we kompýuter üçin göni ýüklemeler</h3>
-                  <p class="helper-text">
-                    PWA-dan peýdalanyşy dowam etdirmek bilen birlikde, aşakdaky bölümlerden Android, iOS we Windows ulgamlarynda aýratyn gurma faýllaryny ýa-da Store linklerini paýlap bilersiňiz.
-                  </p>
-                </div>
-              </div>
-              <div class="download-grid">
-                <a class="download-card" data-platform-download="android" role="button" aria-label="Android üçin ýükle">
-                  <div class="download-card__title">Android üçin ýükle</div>
-                  <p class="download-card__body" data-platform-copy="android">
-                    APK ýa-da Play Store linkiňizi birleşdiriň we gurnama başlamak üçin ulanyjylara gönüden-göni ýol görkeziň.
-                  </p>
-                  <span class="download-badge" data-platform-badge="android">APK ýa-da Play Store</span>
-                </a>
-                <a class="download-card" data-platform-download="ios" role="button" aria-label="iOS üçin ýükle">
-                  <div class="download-card__title">iOS üçin ýükle</div>
-                  <p class="download-card__body" data-platform-copy="ios">
-                    App Store ýa-da enterprise profil linkiňizi goşup, Safari arkaly gönüden-göni gurma mümkinçilik beriň.
-                  </p>
-                  <span class="download-badge" data-platform-badge="ios">App Store ýa-da profil</span>
-                </a>
-                <a class="download-card" data-platform-download="windows" role="button" aria-label="Windows üçin ýükle">
-                  <div class="download-card__title">Windows üçin ýükle</div>
-                  <p class="download-card__body" data-platform-copy="windows">
-                    MSIX/EXE ýa-da Microsoft Store linkiňizi birleşdirip, iş stansiýalary üçin offlaýn gurma üpjün ediň.
-                  </p>
-                  <span class="download-badge" data-platform-badge="windows">MSIX ýa-da Store</span>
-                </a>
-              </div>
-              <p class="helper-text download-footnote">
-                Linkleri <code>distribution-config.js</code> faýlynda sazlaň. URL girizilmedik bolsa kart "Ýakynda elýeter" görnüşinde görkeziler.
-              </p>
-            </section>
 
             <div class="status-panel" aria-label="Synag ýagdaýy">
               <div class="timer" aria-live="polite" aria-label="Wagyt we baha">
@@ -257,7 +159,7 @@
               </div>
             </div>
           </div>
-                </div>
+        </div>
       </header>
 
       <main class="quiz">
