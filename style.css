@@ -181,6 +181,24 @@ picture {
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border);
   height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero__panel .panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.06), transparent 32%),
+    radial-gradient(circle at 80% 10%, rgba(14, 165, 233, 0.05), transparent 30%);
+  z-index: 0;
+}
+
+.hero__panel .panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .panel__header {
@@ -258,6 +276,11 @@ picture {
 .status-panel {
   display: grid;
   gap: 12px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .timer {
@@ -273,18 +296,19 @@ picture {
 .progress-track {
   position: relative;
   width: 100%;
-  height: 12px;
+  height: 14px;
   border-radius: 999px;
-  background: #f1f5f9;
+  background: linear-gradient(90deg, #f8fafc, #e2e8f0);
   overflow: hidden;
   border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .progress-bar {
   position: absolute;
   inset: 0;
   width: 0%;
-  background: linear-gradient(90deg, #4ade80, #22c55e);
+  background: linear-gradient(90deg, #22c55e, #16a34a);
   transition: width 160ms ease;
 }
 
@@ -328,6 +352,40 @@ picture {
   border: 1px solid var(--border);
   color: var(--muted);
   box-shadow: var(--shadow-md);
+}
+
+.start-cta {
+  margin: 12px 0 16px;
+  padding: 18px 18px 18px 20px;
+  border-radius: 16px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(120deg, #f8fbff 35%, #eef2ff 100%);
+  box-shadow: 0 20px 40px rgba(30, 64, 175, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.start-cta h3 {
+  margin: 2px 0 6px;
+}
+
+.start-cta .helper-text {
+  margin: 0;
+  max-width: 520px;
+}
+
+.start-button {
+  min-width: 240px;
+  font-size: 1.12rem;
+  padding: 16px 24px;
+  border-radius: 16px;
+  box-shadow: 0 22px 50px rgba(37, 99, 235, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.start-button:disabled {
+  box-shadow: none;
 }
 
 .info-grid {
@@ -378,6 +436,15 @@ picture {
 
   .cta-banner__secondary {
     justify-content: flex-start;
+  }
+
+  .start-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .start-button {
+    width: 100%;
   }
 }
 
