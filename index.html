@@ -24,24 +24,36 @@
 
       <header class="hero">
         <div class="hero__text">
+          <div class="cta-banner" aria-label="Synaga giriş">
+            <div>
+              <p class="eyebrow">Başlamak üçin taýýarlan</p>
+              <h2>Testi derrew başlaň</h2>
+              <p class="helper-text">
+                Ilki bilen degişli synag toplumy saýlaň, soň "Synaga başla" düwmesine basyň.
+              </p>
+            </div>
+            <div class="cta-banner__actions">
+              <button id="start" class="cta-button" disabled>Synaga başla</button>
+              <div class="cta-banner__secondary">
+                <form action="./highscore.html">
+                  <button class="ghost-button" id="view-high-scores" type="submit">
+                    Synagdan geçenler
+                  </button>
+                </form>
+                <button class="ghost-button install" data-install hidden>
+                  Goşmaça: oflýn taýdan gur
+                </button>
+              </div>
+              <span class="pill pill--status" data-offline aria-live="polite"></span>
+            </div>
+          </div>
+
           <p class="eyebrow">Interaktiw okuw platformasy</p>
           <h1>Bilimiňi syna!</h1>
           <p class="lede">
             Sorag toplumy saýla, wagtyňy dolandyr we netijeleri derrew al. Platforma
             matematika we dil sapaklary üçin taýýarlanan görnüşde işlenildi.
           </p>
-          <div class="hero__actions">
-            <button id="start" disabled>Synaga başla</button>
-            <form action="./highscore.html">
-              <button class="ghost-button" id="view-high-scores" type="submit">
-                Synagdan geçenler
-              </button>
-            </form>
-            <button class="ghost-button install" data-install hidden>
-              Goşmaça: oflýn taýdan gur
-            </button>
-            <span class="pill pill--status" data-offline aria-live="polite"></span>
-          </div>
           <div class="meta-row" id="meta-row">
             <div class="meta-card">
               <span class="label">Synag toplumy</span>
