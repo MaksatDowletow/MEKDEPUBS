@@ -24,7 +24,13 @@
   <body>
     <div class="app-shell">
       <header id="start-screen" class="hero">
-                <div class="topbar__actions">
+        <div class="hero__text">
+          <div class="topbar" aria-label="Baş sahypa dolandyryşy">
+            <div class="brand" aria-label="Bilimiňi syna">
+              <span class="dot" aria-hidden="true"></span>
+              <span class="brand__label">Bilimiňi syna</span>
+            </div>
+            <div class="topbar__actions">
               <form action="./highscore.html">
                 <button class="ghost-button" id="view-high-scores" type="submit">
                   Netijeler
@@ -233,6 +239,7 @@
 
         <div id="feedback" class="feedback hide" role="status" aria-live="polite"></div>
       </main>
+    </div>
 
     <script src="./question-bank.js"></script>
     <script src="./script.js"></script>
