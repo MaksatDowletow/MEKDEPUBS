@@ -597,6 +597,16 @@ input[type="text"] {
   font-size: 0.9rem;
 }
 
+.input-hint--error {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.input-hint--success {
+  color: var(--success);
+  font-weight: 700;
+}
+
 .form-row {
   display: flex;
   gap: 10px;
@@ -716,6 +726,11 @@ ol {
   margin: 14px 0 18px;
 }
 
+#highscores {
+  list-style: none;
+  padding-left: 0;
+}
+
 li {
   padding: 10px 12px;
   list-style: decimal inside none;
@@ -727,6 +742,69 @@ li {
 
 li:nth-child(odd) {
   background-color: #f7f9ff;
+}
+
+.score-item {
+  list-style: none;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  box-shadow: var(--shadow-md);
+}
+
+.score-item__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.score-item__name {
+  margin: 0;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.score-item__subtitle {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.score-badge {
+  background: #eef2ff;
+  color: #1d4ed8;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #cbd5ff;
+  font-weight: 800;
+  min-width: 120px;
+  text-align: center;
+}
+
+.score-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.score-meta__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.score-empty {
+  text-align: center;
+  color: var(--muted);
 }
 
 .score-actions {
