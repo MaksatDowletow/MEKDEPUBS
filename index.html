@@ -8,6 +8,9 @@
       content="Bilim synaglaryny ýerine ýetirip, üstünlikleriňi derrew gör!"
     />
     <meta name="theme-color" content="#1d4ed8" />
+    <meta name="application-name" content="Bilimiňi syna" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg" />
     <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
@@ -115,6 +118,29 @@
                 <strong>Üns beriň.</strong> Depderçe ulanyň, jogaplary diňläň we her saýlawy
                 ünsli barlaň.
               </div>
+              <div class="callout">
+                <strong>Oflaýn işläp bilýär.</strong> Aşakdaky giňeltme arkaly faýllary öňünden ýükläp,
+                Android, iOS we Windows enjamlarynda öý ekranyna goşup ulanyp bilersiňiz.
+              </div>
+            </div>
+
+            <div class="panel__footer">
+              <p class="label">PWA taýýarlygy</p>
+              <p class="helper-text" data-install-helper hidden>
+                Brauzeriň menýusyndan "Guruň" / "Add to Home Screen" saýlap ýa-da aşakdaky düwmä basyp
+                oflaýn faýllary taýýarlap bilersiňiz.
+              </p>
+              <div class="status-row">
+                <button class="ghost-button" type="button" data-prime-offline>
+                  Oflýn faýllary öňünden ýükle
+                </button>
+                <span class="pill pill--status" data-offline-status hidden aria-live="polite"></span>
+              </div>
+              <ul class="helper-text">
+                <li><strong>Android:</strong> Üstki sag burçdaky menýudan "Ekraňa goş" saýlaň.</li>
+                <li><strong>iOS (Safari):</strong> Paýlaş menýusyndan "Add to Home Screen" saýlaň.</li>
+                <li><strong>Windows:</strong> Adres setirindäki "Install" nyşanyna basyň ýa-da brauzer menýusyny ulanyň.</li>
+              </ul>
             </div>
 
             <div class="status-panel" aria-label="Synag ýagdaýy">

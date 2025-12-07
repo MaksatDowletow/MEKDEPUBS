@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mekdepubs-cache-v4';
+const CACHE_NAME = 'mekdepubs-cache-v5';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,23 @@ const OFFLINE_ASSETS = [
   './highScore.js',
   './pwa.js',
   './question-bank.js',
+  './question-bank.json',
+  './ubs-loader.js',
+  './UBS2synpTESTA.js',
+  './UBS2synpTESTB.js',
+  './UBS3njisynpTESTA.js',
+  './UBS3njisynpTESTB.js',
+  './UBS4njisynpTESTA.js',
+  './UBS4njisynpTESTB.js',
+  './UBS5njiSynp.js',
+  './UBT8TestA.js',
+  './UBT8TestB.js',
+  './UBT9synpTestA.js',
+  './UBT9synpTestB.js',
+  './UBT10TestA.js',
+  './UBT10TestB.js',
+  './UBT11TestA.js',
+  './UBT11TestB.js',
   './manifest.webmanifest',
   './icons/icon-192.svg',
   './icons/icon-512.svg'
