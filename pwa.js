@@ -4,11 +4,12 @@ const installHelper = document.querySelector('[data-install-helper]');
 const offlinePrepButton = document.querySelector('[data-prime-offline]');
 const offlinePrepStatus = document.querySelector('[data-offline-status]');
 
-const CACHE_NAME = 'mekdepubs-cache-v5';
+const CACHE_NAME = 'mekdepubs-cache-v6';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
   './highscore.html',
+  './offline.html',
   './style.css',
   './script.js',
   './highScore.js',
@@ -152,13 +153,40 @@ function primeOfflineAssets() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch((error) => {
-      console.warn('Service worker registrasiýasy şowsuz boldy', error);
-    });
+    navigator.serviceWorker
+      .register('./service-worker.js')
+      .then((registration) => {
+        registration.addEventListener('updatefound', () => {
+          updateOfflinePrepStatus('Täze wersiýa ýüklenýär...', false);
+        });
+        return registration;
+      })
+      .catch((error) => {
+        console.warn('Service worker registrasiýasy şowsuz boldy', error);
+      });
   });
+}
+
+function listenForServiceWorkerReady() {
+  if (!navigator.serviceWorker) return;
+
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'PRECACHE_DONE') {
+      updateOfflinePrepStatus('Faýllar oflýn ulanmak üçin taýýar.', false);
+    }
+  });
+
+  navigator.serviceWorker.ready
+    .then((registration) => {
+      if (registration.active) {
+        updateOfflinePrepStatus('PWA hyzmatkär ýüklenip, oflaýn işe taýýar.');
+      }
+    })
+    .catch(() => {});
 }
 
 registerServiceWorker();
 wireNetworkStatus();
 wireInstallPrompt();
 primeOfflineAssets();
+listenForServiceWorkerReady();
