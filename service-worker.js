@@ -1,8 +1,9 @@
-const CACHE_NAME = 'mekdepubs-cache-v5';
+const CACHE_NAME = 'mekdepubs-cache-v6';
 const OFFLINE_ASSETS = [
   './',
   './index.html',
   './highscore.html',
+  './offline.html',
   './style.css',
   './script.js',
   './highScore.js',
@@ -68,7 +69,11 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')))
+        .catch(() =>
+          caches
+            .match(request)
+            .then((cached) => cached || caches.match('./offline.html') || caches.match('./index.html'))
+        )
     );
     return;
   }
@@ -84,7 +89,7 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
             return response;
           })
-          .catch(() => cached);
+          .catch(() => cached || caches.match('./offline.html'));
       })
     );
   }

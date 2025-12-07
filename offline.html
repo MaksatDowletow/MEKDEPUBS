@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oflýn ýagdaý</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0f172a;
+        --muted: #475569;
+        --accent: #1d4ed8;
+        --surface: #f8fafc;
+        --card: #ffffff;
+        --border: #e2e8f0;
+      }
+      * {
+        box-sizing: border-box;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at 8% 20%, #e0f2fe, transparent 25%),
+          radial-gradient(circle at 92% 10%, #f1f5f9, transparent 22%),
+          linear-gradient(135deg, #f8fafc, #f0f9ff 55%, #e0e7ff);
+        color: var(--ink);
+        padding: 24px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+        max-width: 540px;
+        width: 100%;
+        padding: 20px 22px;
+      }
+      h1 {
+        margin: 0 0 10px;
+        font-size: 1.6rem;
+      }
+      p {
+        margin: 0 0 10px;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #e0f2fe;
+        color: #075985;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+      }
+      .cta {
+        margin-top: 14px;
+        display: inline-block;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        text-decoration: none;
+        color: var(--ink);
+        background: linear-gradient(135deg, #ffffff, #eef2ff);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card" role="status" aria-live="polite">
+      <div class="badge" aria-hidden="true">⚠️ Oflýn ýagdaý</div>
+      <h1>Internet birikmesi ýok</h1>
+      <p>
+        Penjirä goşulan PWA faýllary açylýar, emma täze maglumatlar üçin internet
+        zerur. Birikme dikeldilensoň sahypany täzeläň.
+      </p>
+      <p>Tejribeňiz tertipli bolmagy üçin:</p>
+      <ul>
+        <li>Adaty brauzer penjiresini täzeläň ýa-da programmany täzeden açyň.</li>
+        <li>Oflýn faýllary öňünden ýüklemek üçin "Oflýn faýllary öňünden ýükle" düwmesini ulanyň.</li>
+        <li>Android/iOS/Windows öý ekranyna goşup, oflaýn ýagdaýda hem açyp bilersiňiz.</li>
+      </ul>
+      <a class="cta" href="./index.html">Baş sahypa dolan</a>
+    </main>
+  </body>
+</html>
