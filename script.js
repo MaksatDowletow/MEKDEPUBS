@@ -71,7 +71,7 @@ function normalizeQuestionSets(rawSets) {
               analysis.total += 1;
               const prompt =
                 typeof question.prompt === "string" ? question.prompt.trim() : "";
-              const options = Array.isArray(question.options)
+              let options = Array.isArray(question.options)
                 ? Array.from(
                     new Set(
                       question.options
@@ -81,14 +81,17 @@ function normalizeQuestionSets(rawSets) {
                   )
                 : [];
 
-              if (!options.length) {
-                analysis.missingOptions += 1;
-              }
-
               let answer =
                 typeof question.answer === "string" && question.answer.trim()
                   ? question.answer.trim()
                   : null;
+
+              if (!options.length && answer) {
+                analysis.missingOptions += 1;
+                options = [answer];
+              } else if (!options.length) {
+                analysis.missingOptions += 1;
+              }
 
               if (options.length) {
                 if (!answer) {
@@ -525,10 +528,12 @@ function getQuestion() {
   const promptEl = document.getElementById("question-words");
   promptEl.textContent = currentQuestion.prompt;
   choicesEl.innerHTML = "";
-  (currentQuestion.options || ["Jogap berilmedi"]).forEach(function (
-    choice,
-    i
-  ) {
+  const optionList =
+    Array.isArray(currentQuestion.options) && currentQuestion.options.length
+      ? currentQuestion.options
+      : [currentQuestion.answer || "Jogap berilmedi"];
+
+  optionList.forEach(function (choice, i) {
     const choiceBtn = document.createElement("button");
     choiceBtn.setAttribute("value", choice);
     choiceBtn.textContent = `${i + 1}. ${choice}`;
