@@ -101,6 +101,24 @@
               <div class="value" id="meta-penalty">0 sek</div>
             </div>
           </div>
+
+          <section class="insight-grid" aria-label="Umumy baha berişler">
+            <div class="insight-card">
+              <p class="label">Toplum sany</p>
+              <div class="insight-value" id="stat-total-tests">0</div>
+              <p class="helper-text">UBS/UBT toplumy, bitewi synaglar bilen birlikde.</p>
+            </div>
+            <div class="insight-card">
+              <p class="label">Soraglaryň jemi</p>
+              <div class="insight-value" id="stat-total-questions">0</div>
+              <p class="helper-text">Subýektleriň arasynda elýeterli soraglaryň sany.</p>
+            </div>
+            <div class="insight-card">
+              <p class="label">Orta wagt</p>
+              <div class="insight-value" id="stat-avg-time">0 sek</div>
+              <p class="helper-text">Her soraga üpjün edilýän takmynan wagty görkezýär.</p>
+            </div>
+          </section>
         </div>
         <div class="hero__panel">
           <div class="panel">
@@ -121,6 +139,28 @@
               </select>
             </div>
             <p id="question-set-meta" class="selector-meta"></p>
+
+            <div class="filter-grid" aria-label="Sorag toplumy boýunça gözleg we filterleme">
+              <div class="filter-field">
+                <label for="question-filter" class="selector-label">Gözleg</label>
+                <input
+                  id="question-filter"
+                  type="search"
+                  placeholder="Mysal: algebra, 7 synp ýa-da Test B"
+                  aria-label="Sorag toplumy boýunça gözlegi ýaz"
+                />
+              </div>
+              <div class="filter-field">
+                <label for="grade-filter" class="selector-label">Synp boýunça</label>
+                <select id="grade-filter" aria-label="Synp boýunça filter">
+                  <option value="">Hemmesi</option>
+                </select>
+              </div>
+              <label class="filter-toggle" for="combined-toggle">
+                <input type="checkbox" id="combined-toggle" checked />
+                <span>Bitewi synaglary görkez</span>
+              </label>
+            </div>
 
             <div class="start-cta" aria-label="Synaga giriş">
               <div>
