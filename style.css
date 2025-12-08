@@ -1,5 +1,6 @@
 :root {
   color-scheme: light;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
   --ink: #0f172a;
   --muted: #475569;
   --accent: #2563eb;
@@ -14,11 +15,16 @@
   --radius-card: 14px;
   --radius-soft: 10px;
   --max-width: 1080px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
 }
 
 * {
   box-sizing: border-box;
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
 }
 
 html {
@@ -32,6 +38,35 @@ body {
   color: var(--ink);
   font-size: clamp(15px, 0.9vw + 12px, 17px);
   line-height: 1.6;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-soft);
+  color: var(--accent-strong);
+  font-weight: 800;
+  z-index: 1000;
+  box-shadow: var(--shadow-md);
+}
+
+.skip-link:focus {
+  left: 14px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 a {
@@ -57,6 +92,10 @@ p {
   max-width: var(--max-width);
   margin: clamp(14px, 3vw, 32px) auto 40px;
   padding: 0 clamp(14px, 2vw, 28px) 28px;
+}
+
+#main-content {
+  scroll-margin-top: var(--space-5);
 }
 
 .hero {
@@ -818,5 +857,18 @@ li {
 
   .orb-b {
     top: 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .progress-bar {
+    transition: none;
   }
 }

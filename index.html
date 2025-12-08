@@ -22,6 +22,7 @@
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Mazmuna geç</a>
     <div class="app-shell">
       <header id="start-screen" class="hero">
         <div class="hero__text">
@@ -138,14 +139,22 @@
                 Wagyt/baha: <span id="timer">0</span>
               </div>
               <div class="progress-track" role="presentation">
-                <div class="progress-bar" id="progress-bar"></div>
+                <div
+                  class="progress-bar"
+                  id="progress-bar"
+                  role="progressbar"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-valuenow="0"
+                  aria-valuetext="0% tamamlandy"
+                ></div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main class="quiz">
+      <main class="quiz" id="main-content">
 
         <section class="hide" id="questions" aria-live="polite">
           <div class="card">
@@ -202,6 +211,7 @@
             </p>
             <div class="table-wrapper">
               <table class="review-table" aria-describedby="review-summary">
+                <caption class="sr-only">Nädogry jogaplaryň ýygyndysy</caption>
                 <thead>
                   <tr>
                     <th> # </th>
@@ -224,9 +234,9 @@
       </main>
     </div>
 
-    <script src="./question-bank.js"></script>
-    <script src="./script.js"></script>
-    <script src="./distribution-config.js"></script>
-    <script src="./pwa.js"></script>
+    <script src="./question-bank.js" defer></script>
+    <script src="./script.js" defer></script>
+    <script src="./distribution-config.js" defer></script>
+    <script src="./pwa.js" defer></script>
   </body>
 </html>
