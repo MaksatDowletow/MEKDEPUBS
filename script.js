@@ -742,14 +742,20 @@ function updateProgressLabel(isFinished = false) {
 }
 
 function syncProgressBar(forceComplete = false) {
+  if (!progressBarEl) return;
   if (!questions.length) {
     progressBarEl.style.width = "0%";
+    progressBarEl.setAttribute("aria-valuenow", "0");
+    progressBarEl.setAttribute("aria-valuetext", "0% tamamlandy");
     return;
   }
-  const progress = forceComplete
+  const progressValue = forceComplete
     ? 100
-    : Math.min((currentQuestionIndex / questions.length) * 100, 100).toFixed(2);
-  progressBarEl.style.width = `${progress}%`;
+    : Math.min((currentQuestionIndex / questions.length) * 100, 100);
+  const progressLabel = progressValue.toFixed(2);
+  progressBarEl.style.width = `${progressLabel}%`;
+  progressBarEl.setAttribute("aria-valuenow", progressValue.toFixed(0));
+  progressBarEl.setAttribute("aria-valuetext", `${progressLabel}% tamamlandy`);
 }
 
 // Save users' score after pressing enter
