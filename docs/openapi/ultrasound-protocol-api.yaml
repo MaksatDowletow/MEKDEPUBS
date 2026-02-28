@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Ultrasound Protocol Automation API
+  version: 0.1.0
+  description: API contract for ultrasound protocol input, validation, conclusion generation and export.
+servers:
+  - url: /api
+paths:
+  /patients:
+    get:
+      summary: Search patients
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+  /protocols:
+    post:
+      summary: Create protocol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProtocolCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Protocol'
+  /protocols/{id}:
+    get:
+      summary: Get protocol
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Protocol' }
+    patch:
+      summary: Update protocol
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProtocolPatch' }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Protocol' }
+  /protocols/{id}/validate:
+    post:
+      summary: Validate protocol against reference ranges
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Validation report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path: { type: string }
+                        status:
+                          type: string
+                          enum: [normal, out_of_range_low, out_of_range_high, invalid]
+                        message: { type: string }
+  /protocols/{id}/generate-conclusion:
+    post:
+      summary: Generate draft conclusion
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Generated text
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conclusion: { type: string }
+  /protocols/{id}/pdf:
+    get:
+      summary: Export PDF
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+  /protocols/{id}/fhir:
+    get:
+      summary: Export FHIR DiagnosticReport
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: FHIR JSON
+          content:
+            application/fhir+json:
+              schema:
+                type: object
+components:
+  parameters:
+    Id:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+  schemas:
+    Patient:
+      type: object
+      required: [id, name, gender]
+      properties:
+        id: { type: integer }
+        external_id: { type: string, nullable: true }
+        name: { type: string }
+        birth_date: { type: string, format: date, nullable: true }
+        gender: { type: string, enum: [M, F] }
+        department: { type: string, nullable: true }
+    ProtocolCreate:
+      type: object
+      required: [patient_id, exam_datetime]
+      properties:
+        patient_id: { type: integer }
+        exam_datetime: { type: string, format: date-time }
+        technical: { type: object, additionalProperties: true }
+        organs: { type: object, additionalProperties: true }
+        notes: { type: string }
+    ProtocolPatch:
+      type: object
+      additionalProperties: false
+      properties:
+        technical: { type: object, additionalProperties: true }
+        organs: { type: object, additionalProperties: true }
+        notes: { type: string }
+        conclusion: { type: string }
+        status: { type: string, enum: [draft, final, signed] }
+    Protocol:
+      allOf:
+        - $ref: '#/components/schemas/ProtocolCreate'
+        - type: object
+          required: [id, status, created_at, updated_at]
+          properties:
+            id: { type: integer }
+            doctor_id: { type: integer, nullable: true }
+            conclusion: { type: string, nullable: true }
+            status: { type: string, enum: [draft, final, signed] }
+            created_at: { type: string, format: date-time }
+            updated_at: { type: string, format: date-time }

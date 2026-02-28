@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ultrasound
+      POSTGRES_USER: ultrasound
+      POSTGRES_PASSWORD: ultrasound
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: python:3.12-slim
+    working_dir: /app
+    command: bash -lc "pip install -r requirements.txt && python manage.py migrate && gunicorn us_api.wsgi:application --bind 0.0.0.0:8000"
+    environment:
+      DATABASE_URL: postgres://ultrasound:ultrasound@db:5432/ultrasound
+      DJANGO_SETTINGS_MODULE: us_api.settings
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -lc "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
